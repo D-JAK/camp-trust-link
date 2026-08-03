@@ -64,28 +64,43 @@ export function CampCard({
           <VerificationBadge state={camp.verification_state} />
           {isPreDesignated(camp) ? <PreDesignatedBadge /> : <StatusBadge status={camp.status} />}
           <UrgencyBadge level={urgency} reported={urgencyIsReported} />
-          {camp.checkin_count > 0 ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
-              <Users className="size-3.5" />
-              {t("checkin.count", { count: camp.checkin_count })}
-            </span>
-          ) : null}
         </div>
 
+        {stats.length > 0 ? (
+          <ul className="mt-2 flex flex-wrap items-center gap-1.5">
+            {stats.map(({ key, Icon, value, label }) => (
+              <li key={key}>
+                <Hint label={label}>
+                  <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
+                    <Icon className="size-3.5" />
+                    {value}
+                  </span>
+                </Hint>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
         {(camp.amenities ?? []).length > 0 ? (
-          <ul className="mt-2 flex flex-wrap gap-1.5">
-            {(camp.amenities ?? []).slice(0, 6).map((key) => {
+          <ul className="mt-2 flex flex-wrap items-center gap-1.5">
+            {(camp.amenities ?? []).slice(0, 8).map((key) => {
               const Icon = amenityIcon(key);
               return (
-                <li
-                  key={key}
-                  className="inline-flex items-center gap-1 rounded-md bg-verified/10 px-2 py-1 text-[11px] font-medium text-verified"
-                >
-                  {Icon ? <Icon className="size-3" /> : null}
-                  {t(`amenity.${key}`)}
+                <li key={key}>
+                  <Hint label={t(`amenity.${key}`)}>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-verified/10 px-1.5 py-1 text-[11px] font-medium text-verified">
+                      {Icon ? <Icon className="size-3.5" /> : null}
+                      <span className="sr-only">{t(`amenity.${key}`)}</span>
+                    </span>
+                  </Hint>
                 </li>
               );
             })}
+            {(camp.amenities ?? []).length > 8 ? (
+              <li className="text-[11px] font-semibold text-muted-foreground">
+                +{(camp.amenities ?? []).length - 8}
+              </li>
+            ) : null}
           </ul>
         ) : null}
 
@@ -99,11 +114,15 @@ export function CampCard({
         ) : null}
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
-          <span className="text-xs text-muted-foreground">
-            {t("detail.lastConfirmed")}: {formatIst(camp.status_last_confirmed_at)} IST
-          </span>
+          <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="size-3.5" />
+              {formatIst(camp.status_last_confirmed_at)}
+            </span>
+          </Hint>
           <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
         </div>
+
       </Link>
 
       <div className="flex items-stretch gap-px border-t border-border bg-border">
