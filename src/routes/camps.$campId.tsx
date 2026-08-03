@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { CampMap, googleMapsHref } from "@/components/CampMap";
 import { CheckInCard } from "@/components/CheckInCard";
+import { amenityIcon } from "@/lib/amenities";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import {
   isPreDesignated,
@@ -255,6 +256,47 @@ function CampDetailPage() {
           </ul>
         </section>
       ) : null}
+
+      <section className="panel p-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          {t("detail.inside")}
+        </h2>
+        {camp.reported_people_count !== null || camp.reported_family_count !== null || camp.reported_children_count !== null ? (
+          <p className="mt-2 text-sm font-semibold">
+            <Users className="mr-1.5 inline size-4 text-muted-foreground" />
+            {[
+              camp.reported_people_count !== null ? `${camp.reported_people_count} ${t("checkin.people").toLowerCase()}` : null,
+              camp.reported_family_count !== null ? `${camp.reported_family_count} ${t("checkin.families").toLowerCase()}` : null,
+              camp.reported_children_count !== null ? `${camp.reported_children_count} ${t("checkin.children").toLowerCase()}` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        ) : null}
+        {(camp.amenities ?? []).length > 0 ? (
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {(camp.amenities ?? []).map((key) => {
+              const Icon = amenityIcon(key);
+              return (
+                <li
+                  key={key}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-verified/40 bg-verified/10 px-3 py-1.5 text-xs font-medium text-verified"
+                >
+                  {Icon ? <Icon className="size-3.5" /> : null}
+                  {t(`amenity.${key}`)}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">{t("detail.amenitiesNone")}</p>
+        )}
+        {camp.occupancy_updated_at ? (
+          <p className="mt-3 text-xs text-muted-foreground">
+            {t("detail.reportedAt", { time: formatIst(camp.occupancy_updated_at) })}
+          </p>
+        ) : null}
+      </section>
 
       <CheckInCard campId={camp.id} count={camp.checkin_count ?? 0} />
 
