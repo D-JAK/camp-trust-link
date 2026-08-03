@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, DoorClosed, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { AMENITIES, type AmenityKey } from "@/lib/amenities";
 import { checkInAtCamp, listCheckIns } from "@/lib/checkins.functions";
 import { formatIst, normalisePhone } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
@@ -16,6 +17,10 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
   const [isOpen, setIsOpen] = useState(true);
+  const [people, setPeople] = useState("");
+  const [families, setFamilies] = useState("");
+  const [children, setChildren] = useState("");
+  const [amenities, setAmenities] = useState<AmenityKey[]>([]);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -33,9 +38,22 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
       return;
     }
     setBusy(true);
+    const toCount = (value: string) => {
+      const parsed = Number.parseInt(value, 10);
+      return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+    };
     try {
       const result = await submit({
-        data: { campId, phone: e164, isOpen, note: note.trim() || null },
+        data: {
+          campId,
+          phone: e164,
+          isOpen,
+          note: note.trim() || null,
+          peopleCount: toCount(people),
+          familyCount: toCount(families),
+          childrenCount: toCount(children),
+          amenities,
+        },
       });
       if (result.ok) {
         setDone(true);
@@ -114,6 +132,67 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
             aria-label={t("checkin.phone")}
             className="tap-target w-full rounded-lg border border-border bg-background px-3 text-sm"
           />
+          <fieldset className="rounded-lg border border-border p-3">
+            <legend className="px-1 text-xs font-semibold text-muted-foreground">
+              {t("checkin.occupancy")}
+            </legend>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ["checkin.people", people, setPeople],
+                  ["checkin.families", families, setFamilies],
+                  ["checkin.children", children, setChildren],
+                ] as const
+              ).map(([label, value, setValue]) => (
+                <label key={label} className="block text-xs text-muted-foreground">
+                  {t(label)}
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={value}
+                    onChange={(event) => setValue(event.target.value)}
+                    className="tap-target mt-1 w-full rounded-lg border border-border bg-background px-2 text-sm text-foreground"
+                  />
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="rounded-lg border border-border p-3">
+            <legend className="px-1 text-xs font-semibold text-muted-foreground">
+              {t("checkin.amenities")}
+            </legend>
+            <p className="mb-2 text-xs text-muted-foreground">{t("checkin.amenitiesHint")}</p>
+            <div className="flex flex-wrap gap-2">
+              {AMENITIES.map(({ key, icon: Icon }) => {
+                const selected = amenities.includes(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() =>
+                      setAmenities((current) =>
+                        current.includes(key)
+                          ? current.filter((item) => item !== key)
+                          : [...current, key],
+                      )
+                    }
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium ${
+                      selected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border hover:bg-secondary"
+                    }`}
+                  >
+                    <Icon className="size-3.5" />
+                    {t(`amenity.${key}`)}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <input
             type="text"
             value={note}
@@ -142,6 +221,13 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
                   {t(row.isOpen ? "checkin.open" : "checkin.closed")}
                 </strong>{" "}
                 <span className="text-muted-foreground">{row.phoneMasked}</span>
+                {row.peopleCount !== null && row.peopleCount !== undefined ? (
+                  <span className="block text-muted-foreground">
+                    {row.peopleCount} {t("checkin.people").toLowerCase()}
+                    {row.familyCount ? ` · ${row.familyCount} ${t("checkin.families").toLowerCase()}` : ""}
+                    {row.childrenCount ? ` · ${row.childrenCount} ${t("checkin.children").toLowerCase()}` : ""}
+                  </span>
+                ) : null}
                 {row.note ? <span className="block truncate text-muted-foreground">{row.note}</span> : null}
               </span>
               <span className="shrink-0 text-muted-foreground">{formatIst(row.createdAt)}</span>
