@@ -1,0 +1,393 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+
+export type Locale = "en" | "ml";
+
+type Dict = Record<string, string>;
+
+const en: Dict = {
+  "app.name": "Kerala Camp Check",
+  "app.tagline": "Community-verified relief camp information",
+  "nav.camps": "Camps",
+  "nav.report": "Report a camp",
+  "nav.help": "Helplines",
+  "nav.about": "About",
+  "action.refresh": "Refresh",
+  "action.retry": "Try again",
+  "action.back": "Back",
+  "action.backToTop": "Back to top",
+  "action.next": "Next",
+  "action.previous": "Previous",
+  "action.submit": "Submit report",
+  "action.call": "Call",
+  "action.directions": "Get directions",
+  "action.useLocation": "Use my location",
+  "action.changeLocation": "Change location",
+  "action.clear": "Clear",
+
+  "theme.toggle": "Switch theme",
+  "lang.toggle": "ഭാഷ / Language",
+
+  "disclaimer.title": "Not an official government source",
+  "disclaimer.body":
+    "This is a community-sourced platform. Instructions from the District Collector and Kerala Police always take precedence over anything shown here.",
+
+  "state.verified": "Verified by our team",
+  "state.verified.short": "Verified",
+  "state.unverified": "NOT CONFIRMED — reported by the public",
+  "state.unverified.short": "Not confirmed",
+  "status.active": "Open",
+  "status.inactive": "Closed",
+  "urgency.high": "Needs attention",
+  "urgency.critical": "Critical",
+  "urgency.reported": "Reported by a member of the public, not confirmed",
+
+  "list.title": "Relief camps",
+  "list.nearYou": "Nearest camps to you",
+  "list.count": "{count} camps",
+  "list.empty": "No camps match these filters.",
+  "list.emptyHint": "Try clearing filters or choosing a different district.",
+  "list.loading": "Loading camps…",
+
+  "filter.district": "District",
+  "filter.taluk": "Taluk",
+  "filter.lsg": "Local body",
+  "filter.allDistricts": "All districts",
+  "filter.allTaluks": "All taluks",
+  "filter.allLsg": "All local bodies",
+  "filter.status": "Status",
+  "filter.statusActive": "Open now",
+  "filter.statusInactive": "Closed",
+  "filter.statusAll": "All",
+  "filter.verifiedOnly": "Verified only",
+  "filter.search": "Search camp, place or landmark",
+  "filter.reset": "Reset filters",
+
+  "location.prompt": "Show camps nearest to you?",
+  "location.why": "We use your location only on this device, to sort camps by distance. It is not stored.",
+  "location.denied": "Location is off. Choose your district instead.",
+  "location.searching": "Finding your location…",
+  "location.away": "{km} km away",
+
+  "detail.callBefore": "Call the camp before you travel.",
+  "detail.callBeforeUnverified":
+    "This camp has NOT been confirmed by our team. Call before you travel, and do not rely on this alone.",
+  "detail.contact": "Contact",
+  "detail.noPhone": "No phone number reported for this camp.",
+  "detail.location": "Location",
+  "detail.reportedBy": "Reported by {count} people",
+  "detail.reportedBy.one": "Reported by 1 person",
+  "detail.lastConfirmed": "Camp status last confirmed",
+  "detail.neverConfirmed": "Never confirmed by a human",
+  "detail.stale": "Not confirmed in over 24 hours",
+  "detail.veryStale": "Not confirmed in over 72 hours — treat with caution",
+  "detail.photos": "Photos from reporters",
+  "detail.photoNote": "Reporter identity is withheld.",
+  "detail.reportImage": "Report this photo",
+  "detail.correction": "Something wrong? Report a correction",
+  "detail.incharge": "Camp in-charge",
+  "detail.buildingType": "Building type",
+  "detail.landmark": "Landmark",
+  "detail.notFound": "Camp not found",
+  "detail.sources": "Where this information came from",
+
+  "help.title": "Emergency helplines",
+  "help.state": "Statewide",
+  "help.district": "{district} district",
+  "help.note": "For rescue, medical or evacuation help, call these numbers. We do not dispatch rescue.",
+
+  "weather.title": "Weather",
+  "weather.rain24": "Rain, last 24h",
+  "weather.rainNext": "Rain, next 24h",
+  "weather.source": "Source: Open-Meteo",
+
+  "report.title": "Report a relief camp",
+  "report.intro": "Six short steps. Your name and number are shown only to our verification team, never publicly.",
+  "report.step": "Step {n} of 6",
+  "report.step1": "Where is the camp?",
+  "report.step2": "Camp details",
+  "report.step3": "Status right now",
+  "report.step4": "Photos",
+  "report.step5": "About you",
+  "report.step6": "Confirm your number",
+  "report.locating": "Getting your location…",
+  "report.locationOk": "Location captured",
+  "report.locationNone": "No location — please select the area manually",
+  "report.campName": "Camp name",
+  "report.campNameHint": "Usually the school or building name",
+  "report.village": "Village or locality",
+  "report.landmark": "Landmark",
+  "report.buildingType": "Type of building",
+  "report.inchargeName": "Camp in-charge name",
+  "report.campPhone": "Camp phone number",
+  "report.isOpen": "Is the camp open right now?",
+  "report.yesOpen": "Yes, it is open",
+  "report.noClosed": "No, it is closed",
+  "report.urgency": "Does this camp need attention?",
+  "report.urgencyReason": "Tell us why (required)",
+  "report.urgencyReasonHint": "At least 10 characters",
+  "report.photos": "Add 2 to 4 photos",
+  "report.photoGuidance":
+    "Photograph the building, signage and surroundings. Do not photograph people's faces, and never children.",
+  "report.addPhoto": "Add photo",
+  "report.yourName": "Your name",
+  "report.yourPhone": "Your mobile number",
+  "report.altPhone": "Alternate number (optional)",
+  "report.gender": "Gender (optional)",
+  "report.relationship": "You are (optional)",
+  "report.sendOtp": "Send code by SMS",
+  "report.otpLabel": "6-digit code",
+  "report.otpSent": "We sent a code to {phone}",
+  "report.resend": "Resend code",
+  "report.resendIn": "Resend in {s}s",
+  "report.saved": "Draft saved on this device",
+  "report.doneTitle": "Report received",
+  "report.doneBody":
+    "Your report is now listed publicly as NOT CONFIRMED. Our team may call you to confirm it. Quote this reference if you contact us:",
+  "report.doneAnother": "Report another camp",
+  "report.viewCamp": "View the camp",
+
+  "error.required": "This is required",
+  "error.phone": "Enter a valid 10-digit Indian mobile number",
+  "error.otp": "Enter the 6-digit code",
+  "error.otpWrong": "That code is not correct",
+  "error.minPhotos": "Please add at least 2 photos",
+  "error.samePhoto": "That is the same photo you already added",
+  "error.reason": "Please give at least 10 characters",
+  "error.generic": "Something went wrong. Please try again.",
+
+  "warn.blurry": "This photo looks blurry. You can retake it, or keep it if it is the best you have.",
+  "warn.dark": "This photo is very dark or very bright.",
+  "warn.small": "This photo is too small to be useful. Please take another.",
+
+  "offline.title": "You are offline",
+  "offline.cached": "Showing information saved on this device at {time}",
+  "freshness.updated": "Updated {time} IST",
+  "common.optional": "optional",
+  "common.yes": "Yes",
+  "common.no": "No",
+  "common.close": "Close",
+  "common.select": "Select",
+};
+
+const ml: Dict = {
+  "app.name": "കേരള ക്യാമ്പ് ചെക്ക്",
+  "app.tagline": "സമൂഹം പരിശോധിച്ച ദുരിതാശ്വാസ ക്യാമ്പ് വിവരങ്ങൾ",
+  "nav.camps": "ക്യാമ്പുകൾ",
+  "nav.report": "ക്യാമ്പ് അറിയിക്കുക",
+  "nav.help": "ഹെൽപ്‌ലൈനുകൾ",
+  "nav.about": "കുറിപ്പ്",
+  "action.refresh": "പുതുക്കുക",
+  "action.retry": "വീണ്ടും ശ്രമിക്കുക",
+  "action.back": "തിരികെ",
+  "action.backToTop": "മുകളിലേക്ക്",
+  "action.next": "അടുത്തത്",
+  "action.previous": "മുൻപത്തേത്",
+  "action.submit": "റിപ്പോർട്ട് നൽകുക",
+  "action.call": "വിളിക്കുക",
+  "action.directions": "വഴി കാണിക്കുക",
+  "action.useLocation": "എന്റെ ലൊക്കേഷൻ ഉപയോഗിക്കുക",
+  "action.changeLocation": "ലൊക്കേഷൻ മാറ്റുക",
+  "action.clear": "മായ്ക്കുക",
+
+  "theme.toggle": "തീം മാറ്റുക",
+  "lang.toggle": "Language / ഭാഷ",
+
+  "disclaimer.title": "ഇത് സർക്കാർ ഉറവിടമല്ല",
+  "disclaimer.body":
+    "ഇത് പൊതുജനങ്ങൾ നൽകുന്ന വിവരങ്ങളുള്ള പ്ലാറ്റ്‌ഫോമാണ്. ജില്ലാ കളക്ടറുടെയും കേരള പോലീസിന്റെയും നിർദ്ദേശങ്ങൾക്കാണ് എപ്പോഴും മുൻഗണന.",
+
+  "state.verified": "ഞങ്ങളുടെ ടീം സ്ഥിരീകരിച്ചത്",
+  "state.verified.short": "സ്ഥിരീകരിച്ചു",
+  "state.unverified": "സ്ഥിരീകരിച്ചിട്ടില്ല — പൊതുജനം അറിയിച്ചത്",
+  "state.unverified.short": "സ്ഥിരീകരിച്ചിട്ടില്ല",
+  "status.active": "തുറന്നിരിക്കുന്നു",
+  "status.inactive": "അടച്ചിരിക്കുന്നു",
+  "urgency.high": "ശ്രദ്ധ ആവശ്യമാണ്",
+  "urgency.critical": "അടിയന്തരം",
+  "urgency.reported": "പൊതുജനം അറിയിച്ചത്, സ്ഥിരീകരിച്ചിട്ടില്ല",
+
+  "list.title": "ദുരിതാശ്വാസ ക്യാമ്പുകൾ",
+  "list.nearYou": "നിങ്ങൾക്ക് അടുത്തുള്ള ക്യാമ്പുകൾ",
+  "list.count": "{count} ക്യാമ്പുകൾ",
+  "list.empty": "ഈ ഫിൽട്ടറുകൾക്ക് ക്യാമ്പുകളൊന്നുമില്ല.",
+  "list.emptyHint": "ഫിൽട്ടറുകൾ മായ്ക്കുകയോ മറ്റൊരു ജില്ല തിരഞ്ഞെടുക്കുകയോ ചെയ്യുക.",
+  "list.loading": "ക്യാമ്പുകൾ ലോഡ് ചെയ്യുന്നു…",
+
+  "filter.district": "ജില്ല",
+  "filter.taluk": "താലൂക്ക്",
+  "filter.lsg": "തദ്ദേശ സ്ഥാപനം",
+  "filter.allDistricts": "എല്ലാ ജില്ലകളും",
+  "filter.allTaluks": "എല്ലാ താലൂക്കുകളും",
+  "filter.allLsg": "എല്ലാ തദ്ദേശ സ്ഥാപനങ്ങളും",
+  "filter.status": "അവസ്ഥ",
+  "filter.statusActive": "ഇപ്പോൾ തുറന്നത്",
+  "filter.statusInactive": "അടച്ചത്",
+  "filter.statusAll": "എല്ലാം",
+  "filter.verifiedOnly": "സ്ഥിരീകരിച്ചവ മാത്രം",
+  "filter.search": "ക്യാമ്പ്, സ്ഥലം അല്ലെങ്കിൽ അടയാളം തിരയുക",
+  "filter.reset": "ഫിൽട്ടറുകൾ മായ്ക്കുക",
+
+  "location.prompt": "നിങ്ങൾക്ക് അടുത്തുള്ള ക്യാമ്പുകൾ കാണിക്കട്ടെ?",
+  "location.why": "ദൂരം അനുസരിച്ച് ക്രമീകരിക്കാൻ മാത്രമാണ് ലൊക്കേഷൻ ഉപയോഗിക്കുന്നത്. അത് സൂക്ഷിക്കുന്നില്ല.",
+  "location.denied": "ലൊക്കേഷൻ ലഭ്യമല്ല. ജില്ല തിരഞ്ഞെടുക്കുക.",
+  "location.searching": "ലൊക്കേഷൻ കണ്ടെത്തുന്നു…",
+  "location.away": "{km} കി.മീ അകലെ",
+
+  "detail.callBefore": "പോകുന്നതിന് മുൻപ് ക്യാമ്പിലേക്ക് വിളിക്കുക.",
+  "detail.callBeforeUnverified":
+    "ഈ ക്യാമ്പ് ഞങ്ങളുടെ ടീം സ്ഥിരീകരിച്ചിട്ടില്ല. പോകുന്നതിന് മുൻപ് നിർബന്ധമായും വിളിക്കുക.",
+  "detail.contact": "ബന്ധപ്പെടാൻ",
+  "detail.noPhone": "ഈ ക്യാമ്പിന് ഫോൺ നമ്പർ ലഭ്യമല്ല.",
+  "detail.location": "സ്ഥലം",
+  "detail.reportedBy": "{count} പേർ അറിയിച്ചത്",
+  "detail.reportedBy.one": "1 പേർ അറിയിച്ചത്",
+  "detail.lastConfirmed": "അവസാനം സ്ഥിരീകരിച്ചത്",
+  "detail.neverConfirmed": "ഇതുവരെ ആരും സ്ഥിരീകരിച്ചിട്ടില്ല",
+  "detail.stale": "24 മണിക്കൂറിലധികമായി സ്ഥിരീകരിച്ചിട്ടില്ല",
+  "detail.veryStale": "72 മണിക്കൂറിലധികമായി സ്ഥിരീകരിച്ചിട്ടില്ല — ശ്രദ്ധിക്കുക",
+  "detail.photos": "റിപ്പോർട്ട് ചെയ്തവരുടെ ഫോട്ടോകൾ",
+  "detail.photoNote": "റിപ്പോർട്ട് ചെയ്തയാളുടെ വിവരങ്ങൾ പരസ്യമാക്കുന്നില്ല.",
+  "detail.reportImage": "ഈ ഫോട്ടോ റിപ്പോർട്ട് ചെയ്യുക",
+  "detail.correction": "എന്തെങ്കിലും തെറ്റുണ്ടോ? തിരുത്തൽ അറിയിക്കുക",
+  "detail.incharge": "ക്യാമ്പ് ചുമതലക്കാരൻ",
+  "detail.buildingType": "കെട്ടിടത്തിന്റെ തരം",
+  "detail.landmark": "അടയാളം",
+  "detail.notFound": "ക്യാമ്പ് കണ്ടെത്താനായില്ല",
+  "detail.sources": "വിവരത്തിന്റെ ഉറവിടം",
+
+  "help.title": "അടിയന്തര ഹെൽപ്‌ലൈനുകൾ",
+  "help.state": "സംസ്ഥാനതലം",
+  "help.district": "{district} ജില്ല",
+  "help.note": "രക്ഷാപ്രവർത്തനത്തിനും വൈദ്യസഹായത്തിനും ഈ നമ്പറുകളിൽ വിളിക്കുക. ഞങ്ങൾ രക്ഷാപ്രവർത്തനം നടത്തുന്നില്ല.",
+
+  "weather.title": "കാലാവസ്ഥ",
+  "weather.rain24": "കഴിഞ്ഞ 24 മണിക്കൂർ മഴ",
+  "weather.rainNext": "അടുത്ത 24 മണിക്കൂർ മഴ",
+  "weather.source": "ഉറവിടം: Open-Meteo",
+
+  "report.title": "ദുരിതാശ്വാസ ക്യാമ്പ് അറിയിക്കുക",
+  "report.intro": "ആറ് ചെറിയ ഘട്ടങ്ങൾ. നിങ്ങളുടെ പേരും നമ്പറും ഞങ്ങളുടെ ടീമിന് മാത്രമേ കാണൂ, പരസ്യമാക്കില്ല.",
+  "report.step": "ഘട്ടം {n} / 6",
+  "report.step1": "ക്യാമ്പ് എവിടെയാണ്?",
+  "report.step2": "ക്യാമ്പ് വിവരങ്ങൾ",
+  "report.step3": "ഇപ്പോഴത്തെ അവസ്ഥ",
+  "report.step4": "ഫോട്ടോകൾ",
+  "report.step5": "നിങ്ങളെക്കുറിച്ച്",
+  "report.step6": "നമ്പർ സ്ഥിരീകരിക്കുക",
+  "report.locating": "ലൊക്കേഷൻ എടുക്കുന്നു…",
+  "report.locationOk": "ലൊക്കേഷൻ ലഭിച്ചു",
+  "report.locationNone": "ലൊക്കേഷൻ ഇല്ല — സ്ഥലം സ്വയം തിരഞ്ഞെടുക്കുക",
+  "report.campName": "ക്യാമ്പിന്റെ പേര്",
+  "report.campNameHint": "സാധാരണയായി സ്കൂളിന്റെയോ കെട്ടിടത്തിന്റെയോ പേര്",
+  "report.village": "വില്ലേജ് / പ്രദേശം",
+  "report.landmark": "അടയാളം",
+  "report.buildingType": "കെട്ടിടത്തിന്റെ തരം",
+  "report.inchargeName": "ചുമതലക്കാരന്റെ പേര്",
+  "report.campPhone": "ക്യാമ്പിന്റെ ഫോൺ നമ്പർ",
+  "report.isOpen": "ക്യാമ്പ് ഇപ്പോൾ തുറന്നിട്ടുണ്ടോ?",
+  "report.yesOpen": "ഉണ്ട്, തുറന്നിരിക്കുന്നു",
+  "report.noClosed": "ഇല്ല, അടച്ചിരിക്കുന്നു",
+  "report.urgency": "ഈ ക്യാമ്പിന് ശ്രദ്ധ ആവശ്യമുണ്ടോ?",
+  "report.urgencyReason": "കാരണം എഴുതുക (നിർബന്ധം)",
+  "report.urgencyReasonHint": "കുറഞ്ഞത് 10 അക്ഷരങ്ങൾ",
+  "report.photos": "2 മുതൽ 4 വരെ ഫോട്ടോകൾ ചേർക്കുക",
+  "report.photoGuidance":
+    "കെട്ടിടവും ബോർഡും പരിസരവും ഫോട്ടോ എടുക്കുക. ആളുകളുടെ മുഖം എടുക്കരുത്, കുട്ടികളുടേത് ഒരിക്കലും അരുത്.",
+  "report.addPhoto": "ഫോട്ടോ ചേർക്കുക",
+  "report.yourName": "നിങ്ങളുടെ പേര്",
+  "report.yourPhone": "നിങ്ങളുടെ മൊബൈൽ നമ്പർ",
+  "report.altPhone": "മറ്റൊരു നമ്പർ (ഐച്ഛികം)",
+  "report.gender": "ലിംഗം (ഐച്ഛികം)",
+  "report.relationship": "നിങ്ങൾ (ഐച്ഛികം)",
+  "report.sendOtp": "SMS ആയി കോഡ് അയയ്ക്കുക",
+  "report.otpLabel": "6 അക്ക കോഡ്",
+  "report.otpSent": "{phone} എന്ന നമ്പറിലേക്ക് കോഡ് അയച്ചു",
+  "report.resend": "കോഡ് വീണ്ടും അയയ്ക്കുക",
+  "report.resendIn": "{s} സെക്കൻഡിൽ വീണ്ടും",
+  "report.saved": "ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ചു",
+  "report.doneTitle": "റിപ്പോർട്ട് ലഭിച്ചു",
+  "report.doneBody":
+    "നിങ്ങളുടെ റിപ്പോർട്ട് ഇപ്പോൾ 'സ്ഥിരീകരിച്ചിട്ടില്ല' എന്ന നിലയിൽ പരസ്യമായി കാണാം. ഞങ്ങളുടെ ടീം വിളിച്ചേക്കാം. ഈ റഫറൻസ് സൂക്ഷിക്കുക:",
+  "report.doneAnother": "മറ്റൊരു ക്യാമ്പ് അറിയിക്കുക",
+  "report.viewCamp": "ക്യാമ്പ് കാണുക",
+
+  "error.required": "ഇത് നിർബന്ധമാണ്",
+  "error.phone": "ശരിയായ 10 അക്ക മൊബൈൽ നമ്പർ നൽകുക",
+  "error.otp": "6 അക്ക കോഡ് നൽകുക",
+  "error.otpWrong": "കോഡ് ശരിയല്ല",
+  "error.minPhotos": "കുറഞ്ഞത് 2 ഫോട്ടോകൾ ചേർക്കുക",
+  "error.samePhoto": "ഇതേ ഫോട്ടോ ഇതിനകം ചേർത്തിട്ടുണ്ട്",
+  "error.reason": "കുറഞ്ഞത് 10 അക്ഷരങ്ങൾ എഴുതുക",
+  "error.generic": "എന്തോ പിഴവ് സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.",
+
+  "warn.blurry": "ഈ ഫോട്ടോ വ്യക്തമല്ല. വേണമെങ്കിൽ വീണ്ടും എടുക്കാം.",
+  "warn.dark": "ഈ ഫോട്ടോ വളരെ ഇരുണ്ടതോ വളരെ വെളിച്ചമുള്ളതോ ആണ്.",
+  "warn.small": "ഈ ഫോട്ടോ വളരെ ചെറുതാണ്. മറ്റൊന്ന് എടുക്കുക.",
+
+  "offline.title": "നിങ്ങൾ ഓഫ്‌ലൈനാണ്",
+  "offline.cached": "{time} ന് ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ച വിവരങ്ങൾ",
+  "freshness.updated": "{time} IST ന് പുതുക്കി",
+  "common.optional": "ഐച്ഛികം",
+  "common.yes": "ഉണ്ട്",
+  "common.no": "ഇല്ല",
+  "common.close": "അടയ്ക്കുക",
+  "common.select": "തിരഞ്ഞെടുക്കുക",
+};
+
+const dictionaries: Record<Locale, Dict> = { en, ml };
+
+const STORAGE_KEY = "kcc.locale";
+
+type I18nValue = {
+  locale: Locale;
+  setLocale: (l: Locale) => void;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+};
+
+const I18nContext = createContext<I18nValue | null>(null);
+
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [locale, setLocaleState] = useState<Locale>("en");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY) as Locale | null;
+    if (stored === "en" || stored === "ml") {
+      setLocaleState(stored);
+      return;
+    }
+    if (navigator.language?.toLowerCase().startsWith("ml")) setLocaleState("ml");
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
+  const setLocale = useCallback((l: Locale) => {
+    setLocaleState(l);
+    window.localStorage.setItem(STORAGE_KEY, l);
+  }, []);
+
+  const t = useCallback(
+    (key: string, vars?: Record<string, string | number>) => {
+      const table = dictionaries[locale];
+      let value = table[key] ?? dictionaries.en[key] ?? key;
+      if (vars) {
+        for (const [k, v] of Object.entries(vars)) {
+          value = value.replace(`{${k}}`, String(v));
+        }
+      }
+      return value;
+    },
+    [locale],
+  );
+
+  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+export function useI18n(): I18nValue {
+  const ctx = useContext(I18nContext);
+  if (!ctx) throw new Error("useI18n must be used inside I18nProvider");
+  return ctx;
+}
