@@ -173,18 +173,30 @@ function CampDetailPage() {
       </section>
 
       <section className="panel overflow-hidden">
-        <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("detail.location")}</h2>
-          <a
-            href={directionsHref(camp)}
-            target="_blank"
-            rel="noreferrer"
-            className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
-          >
-            <Navigation className="size-4 text-accent" />
-            {t("action.directions")}
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
+              target="_blank"
+              rel="noreferrer"
+              className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
+            >
+              <MapPin className="size-4 text-accent" />
+              {t("map.openGoogle")}
+            </a>
+            <a
+              href={directionsHref(camp)}
+              target="_blank"
+              rel="noreferrer"
+              className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-3 text-sm font-semibold text-accent-foreground"
+            >
+              <Navigation className="size-4" />
+              {t("action.directions")}
+            </a>
+          </div>
         </div>
+
         {lat !== null && lng !== null ? (
           <div className="border-t border-border">
             <CampMap
