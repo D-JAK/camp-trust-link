@@ -45,12 +45,12 @@ export type ReportPayload = {
     height: number;
     blurScore: number | null;
     brightnessScore: number | null;
-    exifLat?: number | null;
-    exifLng?: number | null;
-    exifCapturedAt?: string | null;
+    exifLat?: number | null | undefined;
+    exifLng?: number | null | undefined;
+    exifCapturedAt?: string | null | undefined;
     qualityReasons: string[];
-  };
-}>;
+  }>;
+};
 
 const OTP_TTL_MS = 10 * 60_000;
 const MAX_ATTEMPTS = 5;
