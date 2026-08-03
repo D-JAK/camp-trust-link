@@ -120,24 +120,22 @@ function CampDetailPage() {
         <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
         {camp.name_ml && locale !== "ml" ? <p className="text-base text-muted-foreground">{camp.name_ml}</p> : null}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {preDesignated ? (
-            <PreDesignatedBadge />
-          ) : (
-            <>
-              <VerificationBadge state={camp.verification_state} full />
-              <StatusBadge status={camp.status} />
-            </>
-          )}
+          <VerificationBadge state={camp.verification_state} full />
+          {preDesignated ? <PreDesignatedBadge /> : <StatusBadge status={camp.status} />}
           <UrgencyBadge level={urgency} reported={camp.urgency === "normal" && camp.reported_urgency !== null} />
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-3 text-sm text-muted-foreground">
-          <Hint label={t("detail.lastConfirmed")}>
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="size-4" />
-              <strong className="font-semibold text-foreground">{formatIst(camp.status_last_confirmed_at)}</strong>
-            </span>
-          </Hint>
-          <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+          {camp.status_last_confirmed_at ? (
+            <>
+              <Hint label={t("detail.lastConfirmed")}>
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock className="size-4" />
+                  <strong className="font-semibold text-foreground">{formatIst(camp.status_last_confirmed_at)}</strong>
+                </span>
+              </Hint>
+              <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+            </>
+          ) : null}
           {camp.report_count > 0 ? (
             <Hint label={camp.report_count === 1 ? t("detail.reportedBy.one") : t("detail.reportedBy", { count: camp.report_count })}>
               <span className="inline-flex items-center gap-1.5">
