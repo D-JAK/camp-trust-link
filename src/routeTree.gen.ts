@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HelplinesRouteImport } from './routes/helplines'
+import { Route as NeedsRouteImport } from './routes/needs'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as CampsCampIdRouteImport } from './routes/camps.$campId'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const HelplinesRoute = HelplinesRouteImport.update({
   id: '/helplines',
   path: '/helplines',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NeedsRoute = NeedsRouteImport.update({
+  id: '/needs',
+  path: '/needs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportRoute = ReportRouteImport.update({
@@ -38,12 +44,14 @@ const CampsCampIdRoute = CampsCampIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/needs': typeof NeedsRoute
   '/report': typeof ReportRoute
   '/camps/$campId': typeof CampsCampIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/needs': typeof NeedsRoute
   '/report': typeof ReportRoute
   '/camps/$campId': typeof CampsCampIdRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/needs': typeof NeedsRoute
   '/report': typeof ReportRoute
   '/camps/$campId': typeof CampsCampIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/helplines' | '/report' | '/camps/$campId'
+  fullPaths: '/' | '/helplines' | '/needs' | '/report' | '/camps/$campId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/helplines' | '/report' | '/camps/$campId'
-  id: '__root__' | '/' | '/helplines' | '/report' | '/camps/$campId'
+  to: '/' | '/helplines' | '/needs' | '/report' | '/camps/$campId'
+  id: '__root__' | '/' | '/helplines' | '/needs' | '/report' | '/camps/$campId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HelplinesRoute: typeof HelplinesRoute
+  NeedsRoute: typeof NeedsRoute
   ReportRoute: typeof ReportRoute
   CampsCampIdRoute: typeof CampsCampIdRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/helplines'
       fullPath: '/helplines'
       preLoaderRoute: typeof HelplinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/needs': {
+      id: '/needs'
+      path: '/needs'
+      fullPath: '/needs'
+      preLoaderRoute: typeof NeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report': {
@@ -105,9 +122,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HelplinesRoute: HelplinesRoute,
+  NeedsRoute: NeedsRoute,
   ReportRoute: ReportRoute,
   CampsCampIdRoute: CampsCampIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
