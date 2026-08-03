@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Compass, Filter, RefreshCw, Search, ShieldCheck, X } from "lucide-react";
 import { useMemo } from "react";
 import { CampCard } from "@/components/CampCard";
+import { isPreDesignated } from "@/components/badges";
 import { WeatherPanel } from "@/components/WeatherPanel";
 import { useI18n } from "@/lib/i18n";
 import { haversineKm, matchesQuery } from "@/lib/format";
@@ -14,7 +15,7 @@ type Search = {
   district: string;
   taluk: string;
   lsg: string;
-  status: "active" | "inactive" | "all";
+  status: "active" | "inactive" | "predesignated" | "all";
   verified: boolean;
   q: string;
 };
@@ -25,7 +26,9 @@ export const Route = createFileRoute("/")({
     taluk: typeof search["taluk"] === "string" ? search["taluk"] : "",
     lsg: typeof search["lsg"] === "string" ? search["lsg"] : "",
     status:
-      search["status"] === "inactive" || search["status"] === "all"
+      search["status"] === "inactive" ||
+      search["status"] === "predesignated" ||
+      search["status"] === "all"
         ? search["status"]
         : "active",
     verified: search["verified"] === true || search["verified"] === "true",
@@ -82,7 +85,10 @@ function CampListPage() {
       if (search.district && camp.district_code !== search.district) return false;
       if (search.taluk && camp.taluk !== search.taluk) return false;
       if (search.lsg && camp.lsg_name !== search.lsg) return false;
-      if (search.status !== "all" && camp.status !== search.status) return false;
+      const preDesignated = isPreDesignated(camp);
+      if (search.status === "predesignated" && !preDesignated) return false;
+      if (search.status === "active" && camp.status !== "active") return false;
+      if (search.status === "inactive" && (camp.status !== "inactive" || preDesignated)) return false;
       if (search.verified && camp.verification_state !== "verified") return false;
       if (
         search.q &&
@@ -237,7 +243,7 @@ function CampListPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {(["active", "inactive", "all"] as const).map((value) => (
+          {(["active", "predesignated", "inactive", "all"] as const).map((value) => (
             <button
               key={value}
               type="button"
@@ -252,9 +258,11 @@ function CampListPage() {
               {t(
                 value === "active"
                   ? "filter.statusActive"
-                  : value === "inactive"
-                    ? "filter.statusInactive"
-                    : "filter.statusAll",
+                  : value === "predesignated"
+                    ? "filter.statusPredesignated"
+                    : value === "inactive"
+                      ? "filter.statusInactive"
+                      : "filter.statusAll",
               )}
             </button>
           ))}

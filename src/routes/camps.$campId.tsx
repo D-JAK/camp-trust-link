@@ -13,7 +13,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
-import { StalenessNote, StatusBadge, UrgencyBadge, VerificationBadge } from "@/components/badges";
+import {
+  isPreDesignated,
+  PreDesignatedBadge,
+  StalenessNote,
+  StatusBadge,
+  UrgencyBadge,
+  VerificationBadge,
+} from "@/components/badges";
 import { useI18n } from "@/lib/i18n";
 import { formatIst, stalenessOf } from "@/lib/format";
 import { campQuery, districtsQuery } from "@/lib/queries";
@@ -73,6 +80,7 @@ function CampDetailPage() {
   const district = districts.find((d) => d.code === camp.district_code);
   const districtName = district ? (locale === "ml" && district.name_ml ? district.name_ml : district.name) : camp.district_code;
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
+  const preDesignated = isPreDesignated(camp);
   const unverified = camp.verification_state !== "verified";
   const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
   const lat = camp.latitude != null ? Number(camp.latitude) : null;
@@ -94,8 +102,14 @@ function CampDetailPage() {
           {[districtName, camp.taluk, camp.lsg_name, camp.village_or_locality].filter(Boolean).join(" › ")}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <VerificationBadge state={camp.verification_state} full />
-          <StatusBadge status={camp.status} />
+          {preDesignated ? (
+            <PreDesignatedBadge />
+          ) : (
+            <>
+              <VerificationBadge state={camp.verification_state} full />
+              <StatusBadge status={camp.status} />
+            </>
+          )}
           <UrgencyBadge level={urgency} reported={camp.urgency === "normal" && camp.reported_urgency !== null} />
         </div>
         <div className="mt-3 space-y-1 border-t border-border pt-3 text-sm">
@@ -111,6 +125,12 @@ function CampDetailPage() {
           ) : null}
         </div>
       </header>
+
+      {preDesignated ? (
+        <p className="rounded-xl border-2 border-unverified bg-unverified-soft p-4 text-sm font-semibold text-unverified">
+          {t("state.predesignatedNote")}
+        </p>
+      ) : null}
 
       {/* GUARD-2 */}
       <p
