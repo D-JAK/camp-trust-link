@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowUp, Clock, LifeBuoy, Languages, MapPinned, Moon, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
+import { ArrowUp, Clock, LifeBuoy, Languages, MapPinned, Moon, PackageSearch, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { InfoTip, Hint } from "@/components/InfoTip";
 import { useI18n } from "@/lib/i18n";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", labelKey: "nav.camps", icon: MapPinned },
+  { to: "/needs", labelKey: "nav.needs", icon: PackageSearch },
   { to: "/report", labelKey: "nav.report", icon: Plus },
   { to: "/helplines", labelKey: "nav.help", icon: LifeBuoy },
 ] as const;
@@ -158,7 +159,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         {/* Mobile bottom nav */}
-        <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t border-border bg-surface/98 backdrop-blur lg:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-border bg-surface/98 backdrop-blur lg:hidden">
           {navItems.map((item) => {
             const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
             return (

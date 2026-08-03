@@ -174,3 +174,23 @@ export const campNeedsQuery = (campId: string) =>
       return data ?? [];
     },
   });
+
+/** Camps referenced by a set of requirement rows. */
+export const campsByIdsQuery = (ids: string[]) =>
+  queryOptions({
+    queryKey: ["camps-by-ids", [...ids].sort().join(",")],
+    enabled: ids.length > 0,
+    staleTime: 60_000,
+    queryFn: async (): Promise<Camp[]> => {
+      const out: Camp[] = [];
+      for (let i = 0; i < ids.length; i += 200) {
+        const { data, error } = await supabase
+          .from("camps")
+          .select("*")
+          .in("id", ids.slice(i, i + 200));
+        if (error) throw new Error(error.message);
+        out.push(...(data ?? []));
+      }
+      return out;
+    },
+  });
