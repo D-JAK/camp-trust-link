@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, CircleAlert, DoorClosed, DoorOpen, Clock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleAlert, DoorClosed, DoorOpen, Clock, Landmark } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { Staleness } from "@/lib/format";
@@ -44,6 +44,22 @@ export function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
+
+/** Buildings from the official pre-designated monsoon camp list that nobody has reported as open. */
+export function isPreDesignated(camp: { report_count: number; status: string }) {
+  return camp.report_count === 0 && camp.status !== "active";
+}
+
+export function PreDesignatedBadge() {
+  const { t } = useI18n();
+  return (
+    <span className={cn(base, "bg-secondary text-secondary-foreground")}>
+      <Landmark className="size-3.5" />
+      <span className="normal-case tracking-normal">{t("state.predesignated")}</span>
+    </span>
+  );
+}
+
 
 export function UrgencyBadge({ level, reported = false }: { level: string; reported?: boolean }) {
   const { t } = useI18n();
