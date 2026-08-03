@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { CampMap, googleMapsHref } from "@/components/CampMap";
+import { CheckInCard } from "@/components/CheckInCard";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import {
   isPreDesignated,
@@ -171,30 +173,38 @@ function CampDetailPage() {
       </section>
 
       <section className="panel overflow-hidden">
-        <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("detail.location")}</h2>
-          <a
-            href={directionsHref(camp)}
-            target="_blank"
-            rel="noreferrer"
-            className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
-          >
-            <Navigation className="size-4 text-accent" />
-            {t("action.directions")}
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
+              target="_blank"
+              rel="noreferrer"
+              className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
+            >
+              <MapPin className="size-4 text-accent" />
+              {t("map.openGoogle")}
+            </a>
+            <a
+              href={directionsHref(camp)}
+              target="_blank"
+              rel="noreferrer"
+              className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-3 text-sm font-semibold text-accent-foreground"
+            >
+              <Navigation className="size-4" />
+              {t("action.directions")}
+            </a>
+          </div>
         </div>
+
         {lat !== null && lng !== null ? (
-          <div className="relative h-64 w-full border-t border-border">
-            <iframe
-              title={title}
-              className="size-full"
-              loading="lazy"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.008}%2C${lng + 0.01}%2C${lat + 0.008}&layer=mapnik&marker=${lat}%2C${lng}`}
+          <div className="border-t border-border">
+            <CampMap
+              points={[{ id: camp.id, lat, lng, title, subtitle: camp.landmark ?? camp.lsg_name }]}
+              center={{ lat, lng }}
+              zoom={16}
+              className="h-64"
             />
-            <span className="pointer-events-none absolute left-1/2 top-1/2 size-5 -translate-x-1/2 -translate-y-1/2">
-              <span className="marker-pulse absolute inset-0 rounded-full bg-accent" />
-              <span className="absolute inset-1 rounded-full bg-accent ring-2 ring-accent-foreground" />
-            </span>
           </div>
         ) : (
           <p className="border-t border-border p-4 text-sm text-muted-foreground">
@@ -246,7 +256,10 @@ function CampDetailPage() {
         </section>
       ) : null}
 
+      <CheckInCard campId={camp.id} count={camp.checkin_count ?? 0} />
+
       <EmergencyContacts districtCode={camp.district_code} />
+
 
       <Link
         to="/report"

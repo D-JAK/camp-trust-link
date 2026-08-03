@@ -74,6 +74,53 @@ export type Database = {
         }
         Relationships: []
       }
+      camp_checkins: {
+        Row: {
+          camp_id: string
+          created_at: string
+          day: string
+          id: string
+          ip_hash: string
+          is_open: boolean
+          latitude: number | null
+          longitude: number | null
+          note: string | null
+          phone: string
+        }
+        Insert: {
+          camp_id: string
+          created_at?: string
+          day?: string
+          id?: string
+          ip_hash: string
+          is_open?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          note?: string | null
+          phone: string
+        }
+        Update: {
+          camp_id?: string
+          created_at?: string
+          day?: string
+          id?: string
+          ip_hash?: string
+          is_open?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          note?: string | null
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camp_checkins_camp_id_fkey"
+            columns: ["camp_id"]
+            isOneToOne: false
+            referencedRelation: "camps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       camp_sources: {
         Row: {
           camp_id: string
@@ -113,11 +160,13 @@ export type Database = {
           camp_incharge_name: string | null
           camp_phone_primary: string | null
           camp_phone_secondary: string | null
+          checkin_count: number
           created_at: string
           district_code: string
           duplicate_of: string | null
           id: string
           landmark: string | null
+          last_checkin_at: string | null
           latitude: number | null
           location_accuracy_m: number | null
           longitude: number | null
@@ -148,11 +197,13 @@ export type Database = {
           camp_incharge_name?: string | null
           camp_phone_primary?: string | null
           camp_phone_secondary?: string | null
+          checkin_count?: number
           created_at?: string
           district_code: string
           duplicate_of?: string | null
           id?: string
           landmark?: string | null
+          last_checkin_at?: string | null
           latitude?: number | null
           location_accuracy_m?: number | null
           longitude?: number | null
@@ -183,11 +234,13 @@ export type Database = {
           camp_incharge_name?: string | null
           camp_phone_primary?: string | null
           camp_phone_secondary?: string | null
+          checkin_count?: number
           created_at?: string
           district_code?: string
           duplicate_of?: string | null
           id?: string
           landmark?: string | null
+          last_checkin_at?: string | null
           latitude?: number | null
           location_accuracy_m?: number | null
           longitude?: number | null

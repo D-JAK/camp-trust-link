@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, MapPin, Phone } from "lucide-react";
+import { ChevronRight, MapPin, Navigation, Phone, Users } from "lucide-react";
 import {
   isPreDesignated,
   PreDesignatedBadge,
@@ -8,6 +8,7 @@ import {
   UrgencyBadge,
   VerificationBadge,
 } from "@/components/badges";
+import { googleMapsHref } from "@/components/CampMap";
 import { useI18n } from "@/lib/i18n";
 import { formatIst, stalenessOf } from "@/lib/format";
 import type { Camp } from "@/lib/queries";
@@ -18,59 +19,83 @@ export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number
   const secondary = locale === "ml" && camp.name_ml ? camp.name : camp.name_ml;
   const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
   const urgencyIsReported = camp.urgency === "normal" && camp.reported_urgency !== null;
+  const lat = camp.latitude != null ? Number(camp.latitude) : null;
+  const lng = camp.longitude != null ? Number(camp.longitude) : null;
 
   return (
-    <Link
-      to="/camps/$campId"
-      params={{ campId: camp.id }}
-      className="panel group block p-4 transition-colors hover:border-accent/60 focus-visible:border-accent sm:p-5"
-    >
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold sm:text-lg">{title}</h3>
-          {secondary ? <p className="truncate text-sm text-muted-foreground">{secondary}</p> : null}
-          <p className="mt-1 truncate text-xs text-muted-foreground">
-            {[camp.district_code, camp.taluk, camp.lsg_name, camp.village_or_locality]
-              .filter(Boolean)
-              .join(" › ")}
-          </p>
+    <article className="panel group overflow-hidden transition-colors hover:border-accent/60">
+      <Link
+        to="/camps/$campId"
+        params={{ campId: camp.id }}
+        className="block p-4 focus-visible:bg-secondary/40 sm:p-5"
+      >
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
+            <h3 className="truncate text-base font-semibold sm:text-lg">{title}</h3>
+            {secondary ? <p className="truncate text-sm text-muted-foreground">{secondary}</p> : null}
+            <p className="mt-1 truncate text-xs text-muted-foreground">
+              {[camp.district_code, camp.taluk, camp.lsg_name, camp.village_or_locality]
+                .filter(Boolean)
+                .join(" › ")}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            {typeof distanceKm === "number" ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
+                <MapPin className="size-3.5" />
+                {distanceKm.toFixed(1)} km
+              </span>
+            ) : null}
+            <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </div>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          {typeof distanceKm === "number" ? (
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {isPreDesignated(camp) ? (
+            <PreDesignatedBadge />
+          ) : (
+            <>
+              <VerificationBadge state={camp.verification_state} />
+              <StatusBadge status={camp.status} />
+            </>
+          )}
+          <UrgencyBadge level={urgency} reported={urgencyIsReported} />
+          {camp.checkin_count > 0 ? (
             <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
-              <MapPin className="size-3.5" />
-              {distanceKm.toFixed(1)} km
+              <Users className="size-3.5" />
+              {t("checkin.count", { count: camp.checkin_count })}
             </span>
           ) : null}
-          <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
         </div>
-      </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {isPreDesignated(camp) ? (
-          <PreDesignatedBadge />
-        ) : (
-          <>
-            <VerificationBadge state={camp.verification_state} />
-            <StatusBadge status={camp.status} />
-          </>
-        )}
-        <UrgencyBadge level={urgency} reported={urgencyIsReported} />
-      </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+          <span className="text-xs text-muted-foreground">
+            {t("detail.lastConfirmed")}: {formatIst(camp.status_last_confirmed_at)} IST
+          </span>
+          <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+        </div>
+      </Link>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
-        <span className="text-xs text-muted-foreground">
-          {t("detail.lastConfirmed")}: {formatIst(camp.status_last_confirmed_at)} IST
-        </span>
-        <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+      <div className="flex items-stretch gap-px border-t border-border bg-border">
+        {camp.camp_phone_primary ? (
+          <a
+            href={`tel:${camp.camp_phone_primary}`}
+            className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
+          >
+            <Phone className="size-3.5 text-accent" />
+            {camp.camp_phone_primary}
+          </a>
+        ) : null}
+        <a
+          href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
+          target="_blank"
+          rel="noreferrer"
+          className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
+        >
+          <Navigation className="size-3.5 text-accent" />
+          {t("map.openGoogle")}
+        </a>
       </div>
-
-      {camp.camp_phone_primary ? (
-        <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Phone className="size-3.5" />
-          {camp.camp_phone_primary}
-        </p>
-      ) : null}
-    </Link>
+    </article>
   );
 }

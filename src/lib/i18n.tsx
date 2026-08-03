@@ -5,6 +5,24 @@ export type Locale = "en" | "ml";
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "map.show": "Show map",
+  "map.hide": "Hide map",
+  "map.openGoogle": "Open in Google Maps",
+  "map.noPoints": "No mapped locations in this list yet.",
+  "checkin.title": "Check in",
+  "checkin.subtitle": "At the camp right now? Confirm whether it is open. One check-in per phone number and network each day.",
+  "checkin.open": "It's open",
+  "checkin.closed": "It's closed",
+  "checkin.phone": "Your mobile number",
+  "checkin.note": "Optional note (what you saw)",
+  "checkin.submit": "Submit check-in",
+  "checkin.success": "Thanks — your check-in was recorded.",
+  "checkin.alreadyPhone": "This number already checked in at this camp today.",
+  "checkin.alreadyIp": "A check-in from this network was already recorded for this camp today.",
+  "checkin.error": "Could not record the check-in. Try again.",
+  "checkin.invalidPhone": "Enter a valid 10-digit Indian mobile number.",
+  "checkin.count": "{count} check-ins",
+
   "app.name": "Kerala Camp Check",
   "app.tagline": "Community-verified relief camp information",
   "nav.camps": "Camps",
@@ -174,6 +192,24 @@ const en: Dict = {
 };
 
 const ml: Dict = {
+  "map.show": "മാപ്പ് കാണിക്കുക",
+  "map.hide": "മാപ്പ് മറയ്ക്കുക",
+  "map.openGoogle": "ഗൂഗിൾ മാപ്പിൽ തുറക്കുക",
+  "map.noPoints": "ഈ പട്ടികയിൽ മാപ്പ് ചെയ്ത സ്ഥലങ്ങൾ ഇല്ല.",
+  "checkin.title": "ചെക്ക് ഇൻ",
+  "checkin.subtitle": "ഇപ്പോൾ ക്യാമ്പിലുണ്ടോ? തുറന്നിട്ടുണ്ടോ എന്ന് സ്ഥിരീകരിക്കുക. ഓരോ ഫോൺ നമ്പറിനും നെറ്റ്‌വർക്കിനും ദിവസം ഒരു ചെക്ക് ഇൻ.",
+  "checkin.open": "തുറന്നിരിക്കുന്നു",
+  "checkin.closed": "അടച്ചിരിക്കുന്നു",
+  "checkin.phone": "നിങ്ങളുടെ മൊബൈൽ നമ്പർ",
+  "checkin.note": "കുറിപ്പ് (ഐച്ഛികം)",
+  "checkin.submit": "ചെക്ക് ഇൻ അയയ്ക്കുക",
+  "checkin.success": "നന്ദി — ചെക്ക് ഇൻ രേഖപ്പെടുത്തി.",
+  "checkin.alreadyPhone": "ഈ നമ്പർ ഇന്ന് ഈ ക്യാമ്പിൽ ചെക്ക് ഇൻ ചെയ്തിട്ടുണ്ട്.",
+  "checkin.alreadyIp": "ഈ നെറ്റ്‌വർക്കിൽ നിന്ന് ഇന്ന് ചെക്ക് ഇൻ രേഖപ്പെടുത്തിയിട്ടുണ്ട്.",
+  "checkin.error": "ചെക്ക് ഇൻ രേഖപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "checkin.invalidPhone": "സാധുവായ 10 അക്ക മൊബൈൽ നമ്പർ നൽകുക.",
+  "checkin.count": "{count} ചെക്ക് ഇന്നുകൾ",
+
   "app.name": "കേരള ക്യാമ്പ് ചെക്ക്",
   "app.tagline": "സമൂഹം പരിശോധിച്ച ദുരിതാശ്വാസ ക്യാമ്പ് വിവരങ്ങൾ",
   "nav.camps": "ക്യാമ്പുകൾ",
