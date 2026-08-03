@@ -119,17 +119,22 @@ export function AppShell({ children }: { children: ReactNode }) {
               })}
             </nav>
             <div className="ml-auto flex items-center gap-2">
-              <span className="hidden text-xs text-muted-foreground xl:inline">
-                {t("freshness.updated", { time: formatIst(updatedAt) })}
-              </span>
+              <Hint label={t("freshness.updated", { time: formatIst(updatedAt) })}>
+                <span className="hidden items-center gap-1.5 text-xs text-muted-foreground xl:inline-flex">
+                  <Clock className="size-3.5" />
+                  {formatIst(updatedAt)}
+                </span>
+              </Hint>
               <Toggles />
-              <a
-                href="tel:1077"
-                className="tap-target inline-flex items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
-              >
-                <PhoneCall className="size-4" />
-                1077
-              </a>
+              <Hint label={t("tip.emergency")}>
+                <a
+                  href="tel:1077"
+                  className="tap-target inline-flex items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
+                >
+                  <PhoneCall className="size-4" />
+                  1077
+                </a>
+              </Hint>
             </div>
           </div>
         </header>
