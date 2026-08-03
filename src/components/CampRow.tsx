@@ -26,47 +26,47 @@ export function CampRow({ camp, distanceKm }: { camp: Camp; distanceKm?: number 
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-2">
             <h3 className="truncate text-sm font-semibold">{title}</h3>
-            {isPreDesignated(camp) ? <PreDesignatedBadge /> : <VerificationBadge state={camp.verification_state} />}
+            {isPreDesignated(camp) ? <PreDesignatedBadge /> : null}
+            <VerificationBadge state={camp.verification_state} />
           </div>
           <p className="truncate text-xs text-muted-foreground">
             {[camp.district_code, camp.taluk, camp.lsg_name].filter(Boolean).join(" › ")}
             {" · "}
             {formatIst(camp.status_last_confirmed_at)}
           </p>
-          {amenities.length > 0 ? (
-            <ul className="mt-1 flex flex-wrap gap-1.5">
-              {amenities.map((key) => {
-                const Icon = amenityIcon(key);
-                return (
-                  <li
-                    key={key}
-                    className="inline-flex items-center gap-1 rounded-md bg-verified/10 px-1.5 py-0.5 text-[11px] font-medium text-verified"
-                  >
-                    {Icon ? <Icon className="size-3" /> : null}
-                    {t(`amenity.${key}`)}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+          <ul className="mt-1 flex flex-wrap items-center gap-1.5">
+            {typeof distanceKm === "number" ? (
+              <li className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[11px] font-semibold text-secondary-foreground">
+                <MapPin className="size-3" />
+                {distanceKm.toFixed(1)} km
+              </li>
+            ) : null}
+            {camp.checkin_count > 0 ? (
+              <li className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[11px] font-semibold text-secondary-foreground">
+                <Users className="size-3" />
+                {camp.checkin_count}
+              </li>
+            ) : null}
+            {amenities.map((key) => {
+              const Icon = amenityIcon(key);
+              return (
+                <li
+                  key={key}
+                  className="inline-flex items-center gap-1 rounded-md bg-verified/10 px-1.5 py-0.5 text-[11px] font-medium text-verified"
+                >
+                  {Icon ? <Icon className="size-3" /> : null}
+                  {t(`amenity.${key}`)}
+                </li>
+              );
+            })}
+          </ul>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          {typeof distanceKm === "number" ? (
-            <span className="hidden items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground sm:inline-flex">
-              <MapPin className="size-3.5" />
-              {distanceKm.toFixed(1)} km
-            </span>
-          ) : null}
-          {camp.checkin_count > 0 ? (
-            <span className="hidden items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground sm:inline-flex">
-              <Users className="size-3.5" />
-              {camp.checkin_count}
-            </span>
-          ) : null}
-          {!isPreDesignated(camp) ? <StatusBadge status={camp.status} /> : null}
+          <StatusBadge status={camp.status} />
           <UrgencyBadge level={urgency} reported={camp.urgency === "normal" && camp.reported_urgency !== null} />
           <ChevronRight className="size-4 text-muted-foreground" />
         </div>
+
       </Link>
       <div className="flex shrink-0 items-center gap-1">
         {camp.camp_phone_primary ? (
