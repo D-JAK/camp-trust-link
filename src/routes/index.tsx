@@ -128,6 +128,22 @@ function CampListPage() {
     return withDistance;
   }, [camps.data, coords, search]);
 
+  const mapPoints = useMemo<MapPoint[]>(
+    () =>
+      rows
+        .filter(({ camp }) => camp.latitude != null && camp.longitude != null)
+        .slice(0, 400)
+        .map(({ camp }) => ({
+          id: camp.id,
+          lat: Number(camp.latitude),
+          lng: Number(camp.longitude),
+          title: camp.name,
+          subtitle: [camp.lsg_name, camp.taluk].filter(Boolean).join(", "),
+          tone: isPreDesignated(camp) ? "predesignated" : camp.status === "active" ? "active" : "inactive",
+        })),
+    [rows],
+  );
+
   const talukOptions = taluks.filter((row) => !search.district || row.district_code === search.district);
   const lsgOptions = lsgBodies.filter((row) => !search.district || row.district_code === search.district);
   const filtersActive =
