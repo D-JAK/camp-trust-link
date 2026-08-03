@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { InfoTip } from "@/components/InfoTip";
 import { useI18n } from "@/lib/i18n";
 import { normalisePhone } from "@/lib/format";
 import { processImage, warningKeyFor, type ProcessedImage } from "@/lib/imageProcessing";
