@@ -1,4 +1,5 @@
-import { Search, ShieldCheck, X } from "lucide-react";
+import { ChevronDown, Search, ShieldCheck, X } from "lucide-react";
+import { useState } from "react";
 import { AMENITIES, type AmenityKey } from "@/lib/amenities";
 import { useI18n } from "@/lib/i18n";
 import type { District, LsgBody, Taluk } from "@/lib/queries";
@@ -33,6 +34,7 @@ export function CampFilters({
   lsgBodies: LsgBody[];
 }) {
   const { t, locale } = useI18n();
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
   const talukOptions = taluks.filter((row) => !value.district || row.district_code === value.district);
   const lsgOptions = lsgBodies.filter((row) => !value.district || row.district_code === value.district);
   const filtersActive =
@@ -147,11 +149,23 @@ export function CampFilters({
         </button>
       </div>
 
-      <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("filter.amenities")}
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">{t("filter.amenitiesHint")}</p>
+      <div className="rounded-lg border border-border">
+        <button
+          type="button"
+          onClick={() => setAmenitiesOpen((open) => !open)}
+          aria-expanded={amenitiesOpen}
+          className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+        >
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {t("filter.amenities")}
+            {value.amenities.length > 0 ? ` (${value.amenities.length})` : ""}
+          </span>
+          <ChevronDown
+            className={cn("size-4 shrink-0 text-muted-foreground transition-transform", amenitiesOpen && "rotate-180")}
+          />
+        </button>
+        <div className={cn("px-3 pb-3", !amenitiesOpen && "hidden")}>
+        <p className="text-xs text-muted-foreground">{t("filter.amenitiesHint")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {AMENITIES.map(({ key, icon: Icon }) => {
             const selected = value.amenities.includes(key);
@@ -171,6 +185,7 @@ export function CampFilters({
               </button>
             );
           })}
+        </div>
         </div>
       </div>
 

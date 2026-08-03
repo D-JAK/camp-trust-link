@@ -52,14 +52,8 @@ export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {isPreDesignated(camp) ? (
-            <PreDesignatedBadge />
-          ) : (
-            <>
-              <VerificationBadge state={camp.verification_state} />
-              <StatusBadge status={camp.status} />
-            </>
-          )}
+          <VerificationBadge state={camp.verification_state} />
+          {isPreDesignated(camp) ? <PreDesignatedBadge /> : <StatusBadge status={camp.status} />}
           <UrgencyBadge level={urgency} reported={urgencyIsReported} />
           {camp.checkin_count > 0 ? (
             <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
