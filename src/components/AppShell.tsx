@@ -138,9 +138,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : null}
 
         {/* GUARD-3: persistent, non-dismissible */}
-        <p className="border-b border-border bg-secondary px-4 py-2 text-[0.72rem] leading-relaxed text-secondary-foreground lg:px-6">
-          <span className="font-semibold">{t("disclaimer.title")}.</span> {t("disclaimer.body")}
-        </p>
+        <div className="flex items-center gap-1.5 border-b border-border bg-secondary px-4 py-1.5 text-[0.72rem] font-semibold text-secondary-foreground lg:px-6">
+          <span className="truncate">{t("disclaimer.title")}</span>
+          <InfoTip label={t("disclaimer.body")} />
+        </div>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 sm:px-6 lg:pb-12">{children}</main>
 
