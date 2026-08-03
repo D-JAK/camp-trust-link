@@ -1,0 +1,63 @@
+import { Link } from "@tanstack/react-router";
+import { ChevronRight, MapPin, Phone } from "lucide-react";
+import { StalenessNote, StatusBadge, UrgencyBadge, VerificationBadge } from "@/components/badges";
+import { useI18n } from "@/lib/i18n";
+import { formatIst, stalenessOf } from "@/lib/format";
+import type { Camp } from "@/lib/queries";
+
+export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number | null }) {
+  const { t, locale } = useI18n();
+  const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
+  const secondary = locale === "ml" && camp.name_ml ? camp.name : camp.name_ml;
+  const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
+  const urgencyIsReported = camp.urgency === "normal" && camp.reported_urgency !== null;
+
+  return (
+    <Link
+      to="/camps/$campId"
+      params={{ campId: camp.id }}
+      className="panel group block p-4 transition-colors hover:border-accent/60 focus-visible:border-accent sm:p-5"
+    >
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-semibold sm:text-lg">{title}</h3>
+          {secondary ? <p className="truncate text-sm text-muted-foreground">{secondary}</p> : null}
+          <p className="mt-1 truncate text-xs text-muted-foreground">
+            {[camp.district_code, camp.taluk, camp.lsg_name, camp.village_or_locality]
+              .filter(Boolean)
+              .join(" › ")}
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {typeof distanceKm === "number" ? (
+            <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground">
+              <MapPin className="size-3.5" />
+              {distanceKm.toFixed(1)} km
+            </span>
+          ) : null}
+          <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <VerificationBadge state={camp.verification_state} />
+        <StatusBadge status={camp.status} />
+        <UrgencyBadge level={urgency} reported={urgencyIsReported} />
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+        <span className="text-xs text-muted-foreground">
+          {t("detail.lastConfirmed")}: {formatIst(camp.status_last_confirmed_at)} IST
+        </span>
+        <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+      </div>
+
+      {camp.camp_phone_primary ? (
+        <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Phone className="size-3.5" />
+          {camp.camp_phone_primary}
+        </p>
+      ) : null}
+    </Link>
+  );
+}
