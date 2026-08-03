@@ -223,7 +223,7 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
                 {row.peopleCount !== null && row.peopleCount !== undefined ? (
                   <span className="block text-muted-foreground">
                     {row.peopleCount} {t("checkin.people").toLowerCase()}
-                    {row.familyCount ? ` · ${row.familyCount} ${t("checkin.families").toLowerCase()}` : ""}
+                    
                     {row.childrenCount ? ` · ${row.childrenCount} ${t("checkin.children").toLowerCase()}` : ""}
                   </span>
                 ) : null}
