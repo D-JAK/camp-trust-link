@@ -80,6 +80,10 @@ const en: Dict = {
 
   "theme.toggle": "Switch theme",
   "lang.toggle": "ഭാഷ / Language",
+  "tip.emergency": "Disaster helpline — call 1077",
+  "crumb.camps": "Camps",
+  "detail.callBeforeUnverified.short": "Not confirmed — call first.",
+  "state.predesignatedNote.short": "Pre-designated building — not reported open.",
 
   "disclaimer.title": "Not an official government source",
   "disclaimer.body":
