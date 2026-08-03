@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { InfoTip } from "@/components/InfoTip";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import { useI18n } from "@/lib/i18n";
 
