@@ -5,6 +5,24 @@ export type Locale = "en" | "ml";
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "map.show": "Show map",
+  "map.hide": "Hide map",
+  "map.openGoogle": "Open in Google Maps",
+  "map.noPoints": "No mapped locations in this list yet.",
+  "checkin.title": "Check in",
+  "checkin.subtitle": "At the camp right now? Confirm whether it is open. One check-in per phone number and network each day.",
+  "checkin.open": "It's open",
+  "checkin.closed": "It's closed",
+  "checkin.phone": "Your mobile number",
+  "checkin.note": "Optional note (what you saw)",
+  "checkin.submit": "Submit check-in",
+  "checkin.success": "Thanks — your check-in was recorded.",
+  "checkin.alreadyPhone": "This number already checked in at this camp today.",
+  "checkin.alreadyIp": "A check-in from this network was already recorded for this camp today.",
+  "checkin.error": "Could not record the check-in. Try again.",
+  "checkin.invalidPhone": "Enter a valid 10-digit Indian mobile number.",
+  "checkin.count": "{count} check-ins",
+
   "app.name": "Kerala Camp Check",
   "app.tagline": "Community-verified relief camp information",
   "nav.camps": "Camps",
