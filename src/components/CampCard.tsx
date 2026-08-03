@@ -99,13 +99,12 @@ export function CampCard({
       <Link
         to="/camps/$campId"
         params={{ campId: camp.id }}
-        className="block p-4 focus-visible:bg-secondary/40 sm:p-5"
+        className="block p-3 focus-visible:bg-secondary/40 sm:p-4"
       >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold sm:text-lg">{title}</h3>
-            {secondary ? <p className="truncate text-sm text-muted-foreground">{secondary}</p> : null}
-            <p className="mt-1 truncate text-xs text-muted-foreground">
+            <h3 className="truncate text-base font-semibold">{title}</h3>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
               {[camp.district_code, camp.taluk, camp.lsg_name, camp.village_or_locality]
                 .filter(Boolean)
                 .join(" › ")}
