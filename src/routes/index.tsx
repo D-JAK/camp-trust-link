@@ -43,11 +43,11 @@ export const Route = createFileRoute("/")({
         content:
           "Find the nearest relief camp in Kerala during a flood. Every camp shows who confirmed it and when. Community-sourced, not an official government portal.",
       },
-      { property: "og:title", content: "Find an open relief camp in Kerala" },
+      { property: "og:title", content: "Find an open relief camp in Kerala — Camp Check" },
       {
         property: "og:description",
         content:
-          "Nearest relief camps with verification status, phone numbers and last-confirmed times. Community-sourced.",
+          "Find the nearest relief camp in Kerala during a flood. Every camp shows who confirmed it and when. Community-sourced, not an official government portal.",
       },
     ],
   }),
