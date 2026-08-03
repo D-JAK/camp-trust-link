@@ -43,7 +43,7 @@ const emptySearch: Search = {
   district: "",
   taluk: "",
   lsg: "",
-  status: "active",
+  status: "predesignated",
   verified: false,
   q: "",
   amenities: "",
