@@ -11,6 +11,8 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Hint, InfoTip } from "@/components/InfoTip";
 import { CampCard } from "@/components/CampCard";
 import { CampFilters } from "@/components/CampFilters";
 import { CampMap, type MapPoint } from "@/components/CampMap";
@@ -236,35 +238,51 @@ function CampListPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-2 border-b border-border bg-background/95 px-4 pb-3 pt-2 backdrop-blur sm:-mx-6 sm:px-6">
+      <Breadcrumbs
+        items={[
+          { label: t("crumb.camps"), to: "/" },
+          ...(districtRow
+            ? [{ label: locale === "ml" && districtRow.name_ml ? districtRow.name_ml : districtRow.name, to: "/", search: { district: districtRow.code } }]
+            : []),
+          ...(search.taluk ? [{ label: search.taluk }] : []),
+          ...(search.lsg ? [{ label: search.lsg }] : []),
+        ]}
+      />
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-        <div className="min-w-0">
-          <h1 className="font-display text-2xl font-bold sm:text-3xl">
+        <div className="flex min-w-0 items-baseline gap-2">
+          <h1 className="truncate font-display text-2xl font-bold sm:text-3xl">
             {coords ? t("list.nearYou") : t("list.title")}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("list.count", { count: rows.length })}</p>
+          <span className="shrink-0 text-sm text-muted-foreground">{rows.length}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowMap((value) => !value)}
-            aria-pressed={showMap}
-            className={cn(
-              "tap-target inline-flex items-center gap-2 rounded-lg border px-3 text-sm font-semibold",
-              showMap ? "border-accent bg-accent text-accent-foreground" : "border-border hover:bg-secondary",
-            )}
-          >
-            <MapIcon className="size-4" />
-            <span className="hidden sm:inline">{showMap ? t("map.hide") : t("map.show")}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => camps.refetch()}
-            className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
-          >
-            <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
-            <span className="hidden sm:inline">{t("action.refresh")}</span>
-          </button>
+          <Hint label={showMap ? t("map.hide") : t("map.show")}>
+            <button
+              type="button"
+              onClick={() => setShowMap((value) => !value)}
+              aria-pressed={showMap}
+              aria-label={showMap ? t("map.hide") : t("map.show")}
+              className={cn(
+                "tap-target inline-flex items-center gap-2 rounded-lg border px-3 text-sm font-semibold",
+                showMap ? "border-accent bg-accent text-accent-foreground" : "border-border hover:bg-secondary",
+              )}
+            >
+              <MapIcon className="size-4" />
+              <span className="hidden sm:inline">{showMap ? t("map.hide") : t("map.show")}</span>
+            </button>
+          </Hint>
+          <Hint label={t("action.refresh")}>
+            <button
+              type="button"
+              onClick={() => camps.refetch()}
+              aria-label={t("action.refresh")}
+              className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
+            >
+              <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
+              <span className="hidden sm:inline">{t("action.refresh")}</span>
+            </button>
+          </Hint>
         </div>
       </header>
 
@@ -276,19 +294,20 @@ function CampListPage() {
           className="inline-flex rounded-full border border-border bg-surface p-1"
         >
           {(["camps", "requirements"] as const).map((tab) => (
-            <button
-              key={tab}
-              role="tab"
-              type="button"
-              aria-selected={search.tab === tab}
-              onClick={() => setSearch({ tab })}
-              className={cn(
-                "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
-                search.tab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              {t(tab === "camps" ? "tab.camps" : "tab.requirements")}
-            </button>
+            <Hint key={tab} label={t(tab === "camps" ? "list.title" : "tab.requirementsHint")}>
+              <button
+                role="tab"
+                type="button"
+                aria-selected={search.tab === tab}
+                onClick={() => setSearch({ tab })}
+                className={cn(
+                  "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+                  search.tab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
+                )}
+              >
+                {t(tab === "camps" ? "tab.camps" : "tab.requirements")}
+              </button>
+            </Hint>
           ))}
         </div>
 
@@ -353,23 +372,20 @@ function CampListPage() {
         <div className="space-y-4">
           {/* PUB-1 / PUB-3: location prompt, with district fallback that is never an error state */}
           {!coords ? (
-            <section className="panel p-4">
-              <h2 className="text-sm font-semibold">{t("location.prompt")}</h2>
-              <p className="mt-1 text-xs text-muted-foreground">{t("location.why")}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={request}
-                  className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
-                >
-                  <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
-                  {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
-                </button>
-                {geoStatus === "denied" || geoStatus === "unavailable" ? (
-                  <span className="self-center text-xs text-unverified">{t("location.denied")}</span>
-                ) : null}
-              </div>
-            </section>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={request}
+                className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
+              >
+                <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
+                {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
+              </button>
+              <InfoTip label={t("location.why")} />
+              {geoStatus === "denied" || geoStatus === "unavailable" ? (
+                <span className="text-xs text-unverified">{t("location.denied")}</span>
+              ) : null}
+            </div>
           ) : (
             <button
               type="button"
@@ -385,11 +401,6 @@ function CampListPage() {
             <WeatherPanel lat={weatherPoint.lat} lng={weatherPoint.lng} placeName={weatherPoint.name} />
           ) : null}
 
-          {search.tab === "requirements" ? (
-            <p className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-muted-foreground">
-              {t("tab.requirementsHint")}
-            </p>
-          ) : null}
 
           {camps.isLoading ? (
             <p className="py-10 text-center text-sm text-muted-foreground">{t("list.loading")}</p>

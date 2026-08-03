@@ -80,6 +80,10 @@ const en: Dict = {
 
   "theme.toggle": "Switch theme",
   "lang.toggle": "ഭാഷ / Language",
+  "tip.emergency": "Disaster helpline — call 1077",
+  "crumb.camps": "Camps",
+  "detail.callBeforeUnverified.short": "Not confirmed — call first.",
+  "state.predesignatedNote.short": "Pre-designated building — not reported open.",
 
   "disclaimer.title": "Not an official government source",
   "disclaimer.body":
@@ -340,6 +344,10 @@ const ml: Dict = {
 
   "theme.toggle": "തീം മാറ്റുക",
   "lang.toggle": "Language / ഭാഷ",
+  "tip.emergency": "ദുരന്ത ഹെൽപ്പ്‌ലൈൻ — 1077 വിളിക്കുക",
+  "crumb.camps": "ക്യാമ്പുകൾ",
+  "detail.callBeforeUnverified.short": "സ്ഥിരീകരിച്ചിട്ടില്ല — ആദ്യം വിളിക്കുക.",
+  "state.predesignatedNote.short": "മുൻകൂട്ടി നിശ്ചയിച്ച കെട്ടിടം — തുറന്നതായി അറിയിപ്പില്ല.",
 
   "disclaimer.title": "ഇത് സർക്കാർ ഉറവിടമല്ല",
   "disclaimer.body":

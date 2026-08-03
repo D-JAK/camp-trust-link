@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowUp, LifeBuoy, Languages, MapPinned, Moon, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
+import { ArrowUp, Clock, LifeBuoy, Languages, MapPinned, Moon, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
+import { InfoTip, Hint } from "@/components/InfoTip";
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useOnline } from "@/lib/useGeolocation";
@@ -74,18 +75,23 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur lg:hidden">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5">
             <Wordmark />
-            <a
-              href="tel:1077"
-              className="tap-target inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
-            >
-              <PhoneCall className="size-4" />
-              1077
-            </a>
+            <Hint label={t("tip.emergency")}>
+              <a
+                href="tel:1077"
+                className="tap-target inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
+              >
+                <PhoneCall className="size-4" />
+                1077
+              </a>
+            </Hint>
           </div>
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-            <span className="truncate text-[0.7rem] text-muted-foreground">
-              {t("freshness.updated", { time: formatIst(updatedAt) })}
-            </span>
+            <Hint label={t("freshness.updated", { time: formatIst(updatedAt) })}>
+              <span className="inline-flex items-center gap-1.5 truncate text-[0.7rem] text-muted-foreground">
+                <Clock className="size-3.5" />
+                {formatIst(updatedAt)}
+              </span>
+            </Hint>
             <Toggles />
           </div>
         </header>
@@ -113,17 +119,22 @@ export function AppShell({ children }: { children: ReactNode }) {
               })}
             </nav>
             <div className="ml-auto flex items-center gap-2">
-              <span className="hidden text-xs text-muted-foreground xl:inline">
-                {t("freshness.updated", { time: formatIst(updatedAt) })}
-              </span>
+              <Hint label={t("freshness.updated", { time: formatIst(updatedAt) })}>
+                <span className="hidden items-center gap-1.5 text-xs text-muted-foreground xl:inline-flex">
+                  <Clock className="size-3.5" />
+                  {formatIst(updatedAt)}
+                </span>
+              </Hint>
               <Toggles />
-              <a
-                href="tel:1077"
-                className="tap-target inline-flex items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
-              >
-                <PhoneCall className="size-4" />
-                1077
-              </a>
+              <Hint label={t("tip.emergency")}>
+                <a
+                  href="tel:1077"
+                  className="tap-target inline-flex items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
+                >
+                  <PhoneCall className="size-4" />
+                  1077
+                </a>
+              </Hint>
             </div>
           </div>
         </header>
@@ -138,9 +149,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : null}
 
         {/* GUARD-3: persistent, non-dismissible */}
-        <p className="border-b border-border bg-secondary px-4 py-2 text-[0.72rem] leading-relaxed text-secondary-foreground lg:px-6">
-          <span className="font-semibold">{t("disclaimer.title")}.</span> {t("disclaimer.body")}
-        </p>
+        <div className="flex items-center gap-1.5 border-b border-border bg-secondary px-4 py-1.5 text-[0.72rem] font-semibold text-secondary-foreground lg:px-6">
+          <span className="truncate">{t("disclaimer.title")}</span>
+          <InfoTip label={t("disclaimer.body")} />
+        </div>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 sm:px-6 lg:pb-12">{children}</main>
 

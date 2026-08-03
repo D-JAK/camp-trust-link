@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { InfoTip } from "@/components/InfoTip";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import { useI18n } from "@/lib/i18n";
 
@@ -25,9 +27,12 @@ function HelplinesPage() {
   const { t } = useI18n();
   return (
     <div className="space-y-4">
-      <header>
+      <div className="sticky top-[5.4rem] z-20 -mx-4 border-b border-border bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 lg:top-[3.6rem]">
+        <Breadcrumbs items={[{ label: t("crumb.camps"), to: "/" }, { label: t("nav.help") }]} />
+      </div>
+      <header className="flex items-center gap-1.5">
         <h1 className="font-display text-2xl font-bold sm:text-3xl">{t("help.title")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t("help.note")}</p>
+        <InfoTip label={t("help.note")} />
       </header>
       <EmergencyContacts />
     </div>
