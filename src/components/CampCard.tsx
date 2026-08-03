@@ -9,6 +9,7 @@ import {
   VerificationBadge,
 } from "@/components/badges";
 import { googleMapsHref } from "@/components/CampMap";
+import { amenityIcon } from "@/lib/amenities";
 import { useI18n } from "@/lib/i18n";
 import { formatIst, stalenessOf } from "@/lib/format";
 import type { Camp } from "@/lib/queries";
@@ -67,6 +68,23 @@ export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number
             </span>
           ) : null}
         </div>
+
+        {(camp.amenities ?? []).length > 0 ? (
+          <ul className="mt-2 flex flex-wrap gap-1.5">
+            {(camp.amenities ?? []).slice(0, 6).map((key) => {
+              const Icon = amenityIcon(key);
+              return (
+                <li
+                  key={key}
+                  className="inline-flex items-center gap-1 rounded-md bg-verified/10 px-2 py-1 text-[11px] font-medium text-verified"
+                >
+                  {Icon ? <Icon className="size-3" /> : null}
+                  {t(`amenity.${key}`)}
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
           <span className="text-xs text-muted-foreground">

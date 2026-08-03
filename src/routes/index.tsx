@@ -1,9 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Compass, Filter, Map as MapIcon, RefreshCw, Search, ShieldCheck, X } from "lucide-react";
+import {
+  ChevronDown,
+  Compass,
+  Filter,
+  LayoutGrid,
+  List as ListIcon,
+  Map as MapIcon,
+  RefreshCw,
+  SlidersHorizontal,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { CampCard } from "@/components/CampCard";
+import { CampFilters } from "@/components/CampFilters";
 import { CampMap, type MapPoint } from "@/components/CampMap";
+import { CampRow } from "@/components/CampRow";
 import { isPreDesignated } from "@/components/badges";
 import { WeatherPanel } from "@/components/WeatherPanel";
 import { useI18n } from "@/lib/i18n";
@@ -19,6 +30,24 @@ type Search = {
   status: "active" | "inactive" | "predesignated" | "all";
   verified: boolean;
   q: string;
+  amenities: string;
+  view: "card" | "list";
+  tab: "camps" | "requirements";
+  page: number;
+};
+
+const PAGE_SIZE = 20;
+const emptySearch: Search = {
+  district: "",
+  taluk: "",
+  lsg: "",
+  status: "active",
+  verified: false,
+  q: "",
+  amenities: "",
+  view: "card",
+  tab: "camps",
+  page: 1,
 };
 
 export const Route = createFileRoute("/")({
@@ -34,6 +63,10 @@ export const Route = createFileRoute("/")({
         : "active",
     verified: search["verified"] === true || search["verified"] === "true",
     q: typeof search["q"] === "string" ? search["q"].slice(0, 80) : "",
+    amenities: typeof search["amenities"] === "string" ? search["amenities"].slice(0, 200) : "",
+    view: search["view"] === "list" ? "list" : "card",
+    tab: search["tab"] === "requirements" ? "requirements" : "camps",
+    page: Number(search["page"]) > 0 ? Math.floor(Number(search["page"])) : 1,
   }),
   head: () => ({
     meta: [
@@ -62,14 +95,20 @@ function CampListPage() {
   const navigate = useNavigate({ from: "/" });
   const { coords, status: geoStatus, request, clear } = useGeolocation();
   const [showMap, setShowMap] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const camps = useQuery(campsQuery(search.district || null));
   const { data: districts = [] } = useQuery(districtsQuery());
   const { data: taluks = [] } = useQuery(taluksQuery());
   const { data: lsgBodies = [] } = useQuery(lsgQuery());
 
+  const amenityFilters = useMemo<string[]>(
+    () => search.amenities.split(",").filter(Boolean),
+    [search.amenities],
+  );
+
   const setSearch = (patch: Partial<Search>) =>
-    navigate({ search: (prev: Search) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: Search) => ({ ...prev, page: 1, ...patch }), replace: true });
 
   const districtRow = districts.find((d) => d.code === search.district);
   const weatherPoint = coords
@@ -92,6 +131,14 @@ function CampListPage() {
       if (search.status === "active" && camp.status !== "active") return false;
       if (search.status === "inactive" && (camp.status !== "inactive" || preDesignated)) return false;
       if (search.verified && camp.verification_state !== "verified") return false;
+      if (amenityFilters.length > 0) {
+        const available = camp.amenities ?? [];
+        if (!amenityFilters.every((key: string) => available.includes(key))) return false;
+      }
+      if (search.tab === "requirements") {
+        const level = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
+        if (level === "normal") return false;
+      }
       if (
         search.q &&
         !matchesQuery(
@@ -127,7 +174,11 @@ function CampListPage() {
     });
 
     return withDistance;
-  }, [camps.data, coords, search]);
+  }, [camps.data, coords, search, amenityFilters]);
+
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const page = Math.min(Math.max(1, search.page), pageCount);
+  const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const mapPoints = useMemo<MapPoint[]>(
     () =>
@@ -145,13 +196,32 @@ function CampListPage() {
     [rows],
   );
 
-  const talukOptions = taluks.filter((row) => !search.district || row.district_code === search.district);
-  const lsgOptions = lsgBodies.filter((row) => !search.district || row.district_code === search.district);
-  const filtersActive =
-    search.district || search.taluk || search.lsg || search.q || search.verified || search.status !== "active";
+  const filterValues = {
+    district: search.district,
+    taluk: search.taluk,
+    lsg: search.lsg,
+    status: search.status,
+    verified: search.verified,
+    q: search.q,
+    amenities: amenityFilters,
+  };
 
-  const selectClass =
-    "tap-target w-full rounded-lg border border-border bg-surface px-3 text-sm font-medium outline-none focus-visible:border-accent";
+  const filterPanel = (
+    <CampFilters
+      value={filterValues}
+      onChange={(patch) => {
+        const { amenities, ...rest } = patch;
+        setSearch({
+          ...rest,
+          ...(amenities ? { amenities: amenities.join(",") } : {}),
+        });
+      }}
+      onReset={() => navigate({ search: { ...emptySearch, view: search.view, tab: search.tab } })}
+      districts={districts}
+      taluks={taluks}
+      lsgBodies={lsgBodies}
+    />
+  );
 
   return (
     <div className="space-y-4">
@@ -186,6 +256,55 @@ function CampListPage() {
         </div>
       </header>
 
+      {/* Camps ⇄ Requirements switch, plus view mode */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div
+          role="tablist"
+          aria-label={t("tab.camps")}
+          className="inline-flex rounded-full border border-border bg-surface p-1"
+        >
+          {(["camps", "requirements"] as const).map((tab) => (
+            <button
+              key={tab}
+              role="tab"
+              type="button"
+              aria-selected={search.tab === tab}
+              onClick={() => setSearch({ tab })}
+              className={cn(
+                "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+                search.tab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
+              )}
+            >
+              {t(tab === "camps" ? "tab.camps" : "tab.requirements")}
+            </button>
+          ))}
+        </div>
+
+        <div className="inline-flex items-center gap-1 rounded-lg border border-border p-1">
+          {(
+            [
+              ["card", LayoutGrid, "view.card"],
+              ["list", ListIcon, "view.list"],
+            ] as const
+          ).map(([mode, Icon, label]) => (
+            <button
+              key={mode}
+              type="button"
+              aria-pressed={search.view === mode}
+              aria-label={t(label)}
+              onClick={() => navigate({ search: (prev: Search) => ({ ...prev, view: mode }), replace: true })}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold",
+                search.view === mode ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/60",
+              )}
+            >
+              <Icon className="size-4" />
+              <span className="hidden sm:inline">{t(label)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {showMap ? (
         <section className="panel overflow-hidden">
           {mapPoints.length === 0 ? (
@@ -200,170 +319,122 @@ function CampListPage() {
         </section>
       ) : null}
 
-
-      {/* PUB-1 / PUB-3: location prompt, with district fallback that is never an error state */}
-      {!coords ? (
-        <section className="panel p-4">
-          <h2 className="text-sm font-semibold">{t("location.prompt")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("location.why")}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={request}
-              className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
-            >
-              <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
-              {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
-            </button>
-            {geoStatus === "denied" || geoStatus === "unavailable" ? (
-              <span className="self-center text-xs text-unverified">{t("location.denied")}</span>
-            ) : null}
-          </div>
-        </section>
-      ) : (
-        <button
-          type="button"
-          onClick={clear}
-          className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-secondary"
-        >
-          <Compass className="size-4 text-accent" />
-          {t("action.changeLocation")}
-        </button>
-      )}
-
-      {weatherPoint ? (
-        <WeatherPanel lat={weatherPoint.lat} lng={weatherPoint.lng} placeName={weatherPoint.name} />
-      ) : null}
-
-      <section className="panel space-y-3 p-4" aria-label={t("filter.search")}>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="search"
-            value={search.q}
-            onChange={(event) => setSearch({ q: event.target.value })}
-            placeholder={t("filter.search")}
-            className="tap-target w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-sm outline-none focus-visible:border-accent"
-          />
-        </div>
-
-        <div className="grid gap-2 sm:grid-cols-3">
-          <select
-            className={selectClass}
-            value={search.district}
-            onChange={(event) => setSearch({ district: event.target.value, taluk: "", lsg: "" })}
-            aria-label={t("filter.district")}
-          >
-            <option value="">{t("filter.allDistricts")}</option>
-            {districts.map((d) => (
-              <option key={d.code} value={d.code}>
-                {locale === "ml" && d.name_ml ? d.name_ml : d.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className={selectClass}
-            value={search.taluk}
-            onChange={(event) => setSearch({ taluk: event.target.value, lsg: "" })}
-            aria-label={t("filter.taluk")}
-          >
-            <option value="">{t("filter.allTaluks")}</option>
-            {talukOptions.map((row) => (
-              <option key={row.id} value={row.name}>
-                {row.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className={selectClass}
-            value={search.lsg}
-            onChange={(event) => setSearch({ lsg: event.target.value })}
-            aria-label={t("filter.lsg")}
-          >
-            <option value="">{t("filter.allLsg")}</option>
-            {lsgOptions.map((row) => (
-              <option key={row.id} value={row.name}>
-                {row.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {(["active", "predesignated", "inactive", "all"] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setSearch({ status: value })}
-              className={cn(
-                "rounded-lg border px-3 py-2 text-xs font-semibold",
-                search.status === value
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border hover:bg-secondary",
-              )}
-            >
-              {t(
-                value === "active"
-                  ? "filter.statusActive"
-                  : value === "predesignated"
-                    ? "filter.statusPredesignated"
-                    : value === "inactive"
-                      ? "filter.statusInactive"
-                      : "filter.statusAll",
-              )}
-            </button>
-          ))}
+      <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
+        {/* Collapsible filter sidebar */}
+        <section className="panel lg:sticky lg:top-4">
           <button
             type="button"
-            onClick={() => setSearch({ verified: !search.verified })}
-            aria-pressed={search.verified}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold",
-              search.verified
-                ? "border-verified bg-verified text-verified-foreground"
-                : "border-border hover:bg-secondary",
-            )}
+            onClick={() => setFiltersOpen((value) => !value)}
+            aria-expanded={filtersOpen}
+            className="flex w-full items-center justify-between gap-2 px-4 py-3 text-sm font-semibold"
           >
-            <ShieldCheck className="size-4" />
-            {t("filter.verifiedOnly")}
+            <span className="inline-flex items-center gap-2">
+              <SlidersHorizontal className="size-4 text-accent" />
+              {t("filter.title")}
+            </span>
+            <ChevronDown className={cn("size-4 transition-transform", !filtersOpen && "-rotate-90")} />
           </button>
-          {filtersActive ? (
+          {filtersOpen ? <div className="border-t border-border p-4">{filterPanel}</div> : null}
+        </section>
+
+        <div className="space-y-4">
+          {/* PUB-1 / PUB-3: location prompt, with district fallback that is never an error state */}
+          {!coords ? (
+            <section className="panel p-4">
+              <h2 className="text-sm font-semibold">{t("location.prompt")}</h2>
+              <p className="mt-1 text-xs text-muted-foreground">{t("location.why")}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={request}
+                  className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
+                >
+                  <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
+                  {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
+                </button>
+                {geoStatus === "denied" || geoStatus === "unavailable" ? (
+                  <span className="self-center text-xs text-unverified">{t("location.denied")}</span>
+                ) : null}
+              </div>
+            </section>
+          ) : (
             <button
               type="button"
-              onClick={() =>
-                navigate({ search: { district: "", taluk: "", lsg: "", status: "active", verified: false, q: "" } })
-              }
-              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-secondary"
+              onClick={clear}
+              className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-secondary"
             >
-              <X className="size-4" />
-              {t("filter.reset")}
+              <Compass className="size-4 text-accent" />
+              {t("action.changeLocation")}
             </button>
+          )}
+
+          {weatherPoint ? (
+            <WeatherPanel lat={weatherPoint.lat} lng={weatherPoint.lng} placeName={weatherPoint.name} />
           ) : null}
-        </div>
-      </section>
 
-      {camps.isLoading ? (
-        <p className="py-10 text-center text-sm text-muted-foreground">{t("list.loading")}</p>
-      ) : rows.length === 0 ? (
-        <div className="panel p-8 text-center">
-          <Filter className="mx-auto size-6 text-muted-foreground" />
-          <p className="mt-3 font-semibold">{t("list.empty")}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {search.status !== "active" && !search.district
-              ? t("list.pickDistrict")
-              : t("list.emptyHint")}
-          </p>
+          {search.tab === "requirements" ? (
+            <p className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-muted-foreground">
+              {t("tab.requirementsHint")}
+            </p>
+          ) : null}
 
+          {camps.isLoading ? (
+            <p className="py-10 text-center text-sm text-muted-foreground">{t("list.loading")}</p>
+          ) : rows.length === 0 ? (
+            <div className="panel p-8 text-center">
+              <Filter className="mx-auto size-6 text-muted-foreground" />
+              <p className="mt-3 font-semibold">
+                {t(search.tab === "requirements" ? "list.requirementsEmpty" : "list.empty")}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {search.status !== "active" && !search.district ? t("list.pickDistrict") : t("list.emptyHint")}
+              </p>
+            </div>
+          ) : (
+            <>
+              <ul className={cn(search.view === "list" ? "space-y-2" : "grid gap-3 xl:grid-cols-2")}>
+                {pageRows.map(({ camp, distanceKm }) => (
+                  <li key={camp.id}>
+                    {search.view === "list" ? (
+                      <CampRow camp={camp} distanceKm={distanceKm} />
+                    ) : (
+                      <CampCard camp={camp} distanceKm={distanceKm} />
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {pageCount > 1 ? (
+                <nav className="flex items-center justify-between gap-3" aria-label={t("page.label")}>
+                  <button
+                    type="button"
+                    disabled={page <= 1}
+                    onClick={() =>
+                      navigate({ search: (prev: Search) => ({ ...prev, page: page - 1 }), replace: true })
+                    }
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold hover:bg-secondary disabled:opacity-40"
+                  >
+                    {t("page.prev")}
+                  </button>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {t("page.of", { page, pages: pageCount })}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={page >= pageCount}
+                    onClick={() =>
+                      navigate({ search: (prev: Search) => ({ ...prev, page: page + 1 }), replace: true })
+                    }
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold hover:bg-secondary disabled:opacity-40"
+                  >
+                    {t("page.next")}
+                  </button>
+                </nav>
+              ) : null}
+            </>
+          )}
         </div>
-      ) : (
-        <ul className="space-y-3">
-          {rows.map(({ camp, distanceKm }) => (
-            <li key={camp.id}>
-              <CampCard camp={camp} distanceKm={distanceKm} />
-            </li>
-          ))}
-        </ul>
-      )}
+      </div>
     </div>
   );
 }
