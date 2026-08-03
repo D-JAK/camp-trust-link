@@ -5,10 +5,19 @@ import { googleMapsHref } from "@/components/CampMap";
 import { amenityIcon } from "@/lib/amenities";
 import { formatIst } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import type { Camp } from "@/lib/queries";
+import type { Camp, CampNeed } from "@/lib/queries";
+import { NeedChips } from "@/components/NeedChips";
 
 /** Dense one-line row used by the list (table-like) view of the camp list. */
-export function CampRow({ camp, distanceKm }: { camp: Camp; distanceKm?: number | null }) {
+export function CampRow({
+  camp,
+  distanceKm,
+  needs = [],
+}: {
+  camp: Camp;
+  distanceKm?: number | null;
+  needs?: CampNeed[];
+}) {
   const { t, locale } = useI18n();
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
   const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
@@ -60,6 +69,7 @@ export function CampRow({ camp, distanceKm }: { camp: Camp; distanceKm?: number 
               );
             })}
           </ul>
+          {needs.length > 0 ? <div className="mt-1"><NeedChips needs={needs} limit={5} /></div> : null}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <StatusBadge status={camp.status} />
