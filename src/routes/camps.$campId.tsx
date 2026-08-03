@@ -147,24 +147,25 @@ function CampDetailPage() {
         </div>
       </header>
 
-      {preDesignated ? (
-        <div className="flex items-center gap-1.5 rounded-xl border-2 border-unverified bg-unverified-soft px-4 py-2.5 text-sm font-semibold text-unverified">
-          <span>{t("state.predesignatedNote.short")}</span>
-          <InfoTip label={t("state.predesignatedNote")} className="text-unverified" />
-        </div>
-      ) : null}
-
       {/* GUARD-2 */}
-      <div
-        className={
-          unverified
-            ? "flex items-center gap-1.5 rounded-xl border-2 border-unverified bg-unverified-soft px-4 py-2.5 text-sm font-semibold text-unverified"
-            : "rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm font-medium"
-        }
-      >
-        <span>{unverified ? t("detail.callBeforeUnverified.short") : t("detail.callBefore")}</span>
-        {unverified ? <InfoTip label={t("detail.callBeforeUnverified")} className="text-unverified" /> : null}
-      </div>
+      {preDesignated || unverified ? (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-unverified/50 bg-unverified-soft px-3 py-2 text-sm font-semibold text-unverified">
+          {preDesignated ? (
+            <span className="inline-flex items-center gap-1">
+              {t("state.predesignatedNote.short")}
+              <InfoTip label={t("state.predesignatedNote")} className="text-unverified" />
+            </span>
+          ) : null}
+          <span className="inline-flex items-center gap-1">
+            {t("detail.callBeforeUnverified.short")}
+            <InfoTip label={t("detail.callBeforeUnverified")} className="text-unverified" />
+          </span>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-border bg-secondary px-3 py-2 text-sm font-medium">
+          {t("detail.callBefore")}
+        </div>
+      )}
 
       <section className="panel p-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("detail.contact")}</h2>
