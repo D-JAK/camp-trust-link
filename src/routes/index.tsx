@@ -422,7 +422,7 @@ function CampListPage() {
                     {search.view === "list" ? (
                       <CampRow camp={camp} distanceKm={distanceKm} needs={needsByCamp.get(camp.id) ?? []} />
                     ) : (
-                      <CampCard camp={camp} distanceKm={distanceKm} needs={needsByCamp.get(camp.id) ?? []} />
+                      <CampCard camp={camp} distanceKm={distanceKm} needs={needsByCamp.get(camp.id) ?? []} needsOnly={search.tab === "requirements"} />
                     )}
                   </li>
                 ))}
