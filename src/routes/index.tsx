@@ -61,6 +61,7 @@ function CampListPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const { coords, status: geoStatus, request, clear } = useGeolocation();
+  const [showMap, setShowMap] = useState(false);
 
   const camps = useQuery(campsQuery(search.district || null));
   const { data: districts = [] } = useQuery(districtsQuery());
