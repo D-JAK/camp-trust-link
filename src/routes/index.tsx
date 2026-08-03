@@ -162,15 +162,44 @@ function CampListPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("list.count", { count: rows.length })}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => camps.refetch()}
-          className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
-        >
-          <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
-          <span className="hidden sm:inline">{t("action.refresh")}</span>
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowMap((value) => !value)}
+            aria-pressed={showMap}
+            className={cn(
+              "tap-target inline-flex items-center gap-2 rounded-lg border px-3 text-sm font-semibold",
+              showMap ? "border-accent bg-accent text-accent-foreground" : "border-border hover:bg-secondary",
+            )}
+          >
+            <MapIcon className="size-4" />
+            <span className="hidden sm:inline">{showMap ? t("map.hide") : t("map.show")}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => camps.refetch()}
+            className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
+          >
+            <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
+            <span className="hidden sm:inline">{t("action.refresh")}</span>
+          </button>
+        </div>
       </header>
+
+      {showMap ? (
+        <section className="panel overflow-hidden">
+          {mapPoints.length === 0 ? (
+            <p className="p-6 text-center text-sm text-muted-foreground">{t("map.noPoints")}</p>
+          ) : (
+            <CampMap
+              points={mapPoints}
+              center={coords ? { lat: coords.lat, lng: coords.lng } : null}
+              onSelect={(id) => navigate({ to: "/camps/$campId", params: { campId: id } })}
+            />
+          )}
+        </section>
+      ) : null}
+
 
       {/* PUB-1 / PUB-3: location prompt, with district fallback that is never an error state */}
       {!coords ? (
