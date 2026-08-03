@@ -127,7 +127,7 @@ const en: Dict = {
   "filter.status": "Status",
   "filter.statusActive": "Open now",
   "filter.statusInactive": "Closed",
-  "filter.statusPredesignated": "Pre-designated list",
+  "filter.statusPredesignated": "Government list",
   "filter.statusAll": "All",
   "filter.verifiedOnly": "Verified only",
   "filter.search": "Search camp, place or landmark",
