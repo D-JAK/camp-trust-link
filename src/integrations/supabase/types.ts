@@ -76,39 +76,51 @@ export type Database = {
       }
       camp_checkins: {
         Row: {
+          amenities: string[]
           camp_id: string
+          children_count: number | null
           created_at: string
           day: string
+          family_count: number | null
           id: string
           ip_hash: string
           is_open: boolean
           latitude: number | null
           longitude: number | null
           note: string | null
+          people_count: number | null
           phone: string
         }
         Insert: {
+          amenities?: string[]
           camp_id: string
+          children_count?: number | null
           created_at?: string
           day?: string
+          family_count?: number | null
           id?: string
           ip_hash: string
           is_open?: boolean
           latitude?: number | null
           longitude?: number | null
           note?: string | null
+          people_count?: number | null
           phone: string
         }
         Update: {
+          amenities?: string[]
           camp_id?: string
+          children_count?: number | null
           created_at?: string
           day?: string
+          family_count?: number | null
           id?: string
           ip_hash?: string
           is_open?: boolean
           latitude?: number | null
           longitude?: number | null
           note?: string | null
+          people_count?: number | null
           phone?: string
         }
         Relationships: [
@@ -156,6 +168,7 @@ export type Database = {
       }
       camps: {
         Row: {
+          amenities: string[]
           building_type: Database["public"]["Enums"]["building_type"] | null
           camp_incharge_name: string | null
           camp_phone_primary: string | null
@@ -174,7 +187,11 @@ export type Database = {
           lsg_type: Database["public"]["Enums"]["lsg_type"]
           name: string
           name_ml: string | null
+          occupancy_updated_at: string | null
           report_count: number
+          reported_children_count: number | null
+          reported_family_count: number | null
+          reported_people_count: number | null
           reported_urgency: Database["public"]["Enums"]["urgency_level"] | null
           reported_urgency_reason: string | null
           source_published_at: string | null
@@ -193,6 +210,7 @@ export type Database = {
           village_or_locality: string | null
         }
         Insert: {
+          amenities?: string[]
           building_type?: Database["public"]["Enums"]["building_type"] | null
           camp_incharge_name?: string | null
           camp_phone_primary?: string | null
@@ -211,7 +229,11 @@ export type Database = {
           lsg_type: Database["public"]["Enums"]["lsg_type"]
           name: string
           name_ml?: string | null
+          occupancy_updated_at?: string | null
           report_count?: number
+          reported_children_count?: number | null
+          reported_family_count?: number | null
+          reported_people_count?: number | null
           reported_urgency?: Database["public"]["Enums"]["urgency_level"] | null
           reported_urgency_reason?: string | null
           source_published_at?: string | null
@@ -230,6 +252,7 @@ export type Database = {
           village_or_locality?: string | null
         }
         Update: {
+          amenities?: string[]
           building_type?: Database["public"]["Enums"]["building_type"] | null
           camp_incharge_name?: string | null
           camp_phone_primary?: string | null
@@ -248,7 +271,11 @@ export type Database = {
           lsg_type?: Database["public"]["Enums"]["lsg_type"]
           name?: string
           name_ml?: string | null
+          occupancy_updated_at?: string | null
           report_count?: number
+          reported_children_count?: number | null
+          reported_family_count?: number | null
+          reported_people_count?: number | null
           reported_urgency?: Database["public"]["Enums"]["urgency_level"] | null
           reported_urgency_reason?: string | null
           source_published_at?: string | null
