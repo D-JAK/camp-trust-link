@@ -39,7 +39,7 @@ export function CampCard({
 }) {
   const { t, locale } = useI18n();
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
-  const secondary = locale === "ml" && camp.name_ml ? camp.name : camp.name_ml;
+  
   const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
   const urgencyIsReported = camp.urgency === "normal" && camp.reported_urgency !== null;
   const lat = camp.latitude != null ? Number(camp.latitude) : null;
