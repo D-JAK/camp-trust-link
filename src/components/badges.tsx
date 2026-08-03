@@ -86,7 +86,7 @@ export function UrgencyBadge({ level, reported = false }: { level: string; repor
 
 export function StalenessNote({ staleness }: { staleness: Staleness }) {
   const { t } = useI18n();
-  if (staleness === "fresh") return null;
+  if (staleness === "fresh" || staleness === "never") return null;
   const strong = staleness !== "caution";
   return (
     <span
