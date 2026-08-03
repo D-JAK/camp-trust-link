@@ -301,7 +301,12 @@ function CampListPage() {
         <div className="panel p-8 text-center">
           <Filter className="mx-auto size-6 text-muted-foreground" />
           <p className="mt-3 font-semibold">{t("list.empty")}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{t("list.emptyHint")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {search.status !== "active" && !search.district
+              ? t("list.pickDistrict")
+              : t("list.emptyHint")}
+          </p>
+
         </div>
       ) : (
         <ul className="space-y-3">
