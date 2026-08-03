@@ -59,10 +59,10 @@ export const Route = createFileRoute("/")({
     lsg: typeof search["lsg"] === "string" ? search["lsg"] : "",
     status:
       search["status"] === "inactive" ||
-      search["status"] === "predesignated" ||
+      search["status"] === "active" ||
       search["status"] === "all"
         ? search["status"]
-        : "active",
+        : "predesignated",
     verified: search["verified"] === true || String(search["verified"]) === "true",
     q: typeof search["q"] === "string" ? search["q"].slice(0, 80) : "",
     amenities: typeof search["amenities"] === "string" ? search["amenities"].slice(0, 200) : "",
