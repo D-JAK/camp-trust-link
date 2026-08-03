@@ -372,23 +372,20 @@ function CampListPage() {
         <div className="space-y-4">
           {/* PUB-1 / PUB-3: location prompt, with district fallback that is never an error state */}
           {!coords ? (
-            <section className="panel p-4">
-              <h2 className="text-sm font-semibold">{t("location.prompt")}</h2>
-              <p className="mt-1 text-xs text-muted-foreground">{t("location.why")}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={request}
-                  className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
-                >
-                  <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
-                  {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
-                </button>
-                {geoStatus === "denied" || geoStatus === "unavailable" ? (
-                  <span className="self-center text-xs text-unverified">{t("location.denied")}</span>
-                ) : null}
-              </div>
-            </section>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={request}
+                className="tap-target inline-flex items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground"
+              >
+                <Compass className={cn("size-4", geoStatus === "asking" && "animate-spin")} />
+                {geoStatus === "asking" ? t("location.searching") : t("action.useLocation")}
+              </button>
+              <InfoTip label={t("location.why")} />
+              {geoStatus === "denied" || geoStatus === "unavailable" ? (
+                <span className="text-xs text-unverified">{t("location.denied")}</span>
+              ) : null}
+            </div>
           ) : (
             <button
               type="button"
@@ -404,11 +401,6 @@ function CampListPage() {
             <WeatherPanel lat={weatherPoint.lat} lng={weatherPoint.lng} placeName={weatherPoint.name} />
           ) : null}
 
-          {search.tab === "requirements" ? (
-            <p className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-muted-foreground">
-              {t("tab.requirementsHint")}
-            </p>
-          ) : null}
 
           {camps.isLoading ? (
             <p className="py-10 text-center text-sm text-muted-foreground">{t("list.loading")}</p>
