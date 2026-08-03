@@ -19,7 +19,7 @@ import { isPreDesignated } from "@/components/badges";
 import { WeatherPanel } from "@/components/WeatherPanel";
 import { useI18n } from "@/lib/i18n";
 import { haversineKm, matchesQuery } from "@/lib/format";
-import { campsQuery, districtsQuery, lsgQuery, taluksQuery, type Camp } from "@/lib/queries";
+import { campsQuery, districtsQuery, lsgQuery, needsQuery, taluksQuery, type Camp, type CampNeed } from "@/lib/queries";
 import { useGeolocation } from "@/lib/useGeolocation";
 import { cn } from "@/lib/utils";
 
@@ -101,6 +101,17 @@ function CampListPage() {
   const { data: districts = [] } = useQuery(districtsQuery());
   const { data: taluks = [] } = useQuery(taluksQuery());
   const { data: lsgBodies = [] } = useQuery(lsgQuery());
+  const { data: needs = [] } = useQuery(needsQuery());
+
+  const needsByCamp = useMemo(() => {
+    const map = new Map<string, CampNeed[]>();
+    needs.forEach((need) => {
+      const list = map.get(need.camp_id) ?? [];
+      list.push(need);
+      map.set(need.camp_id, list);
+    });
+    return map;
+  }, [needs]);
 
   const amenityFilters = useMemo<string[]>(
     () => search.amenities.split(",").filter(Boolean),
@@ -137,7 +148,7 @@ function CampListPage() {
       }
       if (search.tab === "requirements") {
         const level = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
-        if (level === "normal") return false;
+        if (level === "normal" && (needsByCamp.get(camp.id) ?? []).length === 0) return false;
       }
       if (
         search.q &&
@@ -174,7 +185,7 @@ function CampListPage() {
     });
 
     return withDistance;
-  }, [camps.data, coords, search, amenityFilters]);
+  }, [camps.data, coords, search, amenityFilters, needsByCamp]);
 
   const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, search.page), pageCount);
@@ -398,9 +409,9 @@ function CampListPage() {
                 {pageRows.map(({ camp, distanceKm }) => (
                   <li key={camp.id}>
                     {search.view === "list" ? (
-                      <CampRow camp={camp} distanceKm={distanceKm} />
+                      <CampRow camp={camp} distanceKm={distanceKm} needs={needsByCamp.get(camp.id) ?? []} />
                     ) : (
-                      <CampCard camp={camp} distanceKm={distanceKm} />
+                      <CampCard camp={camp} distanceKm={distanceKm} needs={needsByCamp.get(camp.id) ?? []} />
                     )}
                   </li>
                 ))}

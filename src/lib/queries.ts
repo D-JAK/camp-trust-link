@@ -138,3 +138,39 @@ export const weatherQuery = (lat: number | null, lng: number | null) =>
       };
     },
   });
+
+export type CampNeed = Tables<"camp_needs">;
+
+/** All open requirements, used to power the Requirements tab of the list. */
+export const needsQuery = () =>
+  queryOptions({
+    queryKey: ["camp-needs"],
+    staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+    queryFn: async (): Promise<CampNeed[]> => {
+      const { data, error } = await supabase
+        .from("camp_needs")
+        .select("*")
+        .order("urgency", { ascending: false })
+        .order("updated_at", { ascending: false })
+        .limit(4000);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+
+export const campNeedsQuery = (campId: string) =>
+  queryOptions({
+    queryKey: ["camp-needs", campId],
+    staleTime: 30_000,
+    queryFn: async (): Promise<CampNeed[]> => {
+      const { data, error } = await supabase
+        .from("camp_needs")
+        .select("*")
+        .eq("camp_id", campId)
+        .order("urgency", { ascending: false })
+        .order("item_key");
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });

@@ -13,7 +13,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { CampMap, googleMapsHref } from "@/components/CampMap";
+import { CampNeeds } from "@/components/CampNeeds";
 import { CheckInCard } from "@/components/CheckInCard";
+
 import { amenityIcon } from "@/lib/amenities";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import {
@@ -298,7 +300,10 @@ function CampDetailPage() {
         ) : null}
       </section>
 
+      <CampNeeds campId={camp.id} />
+
       <CheckInCard campId={camp.id} count={camp.checkin_count ?? 0} />
+
 
       <EmergencyContacts districtCode={camp.district_code} />
 

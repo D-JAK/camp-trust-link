@@ -133,6 +133,56 @@ export type Database = {
           },
         ]
       }
+      camp_needs: {
+        Row: {
+          camp_id: string
+          created_at: string
+          id: string
+          item_key: string
+          label: string | null
+          needed_qty: number
+          note: string | null
+          pledged_qty: number
+          unit: string
+          updated_at: string
+          urgency: Database["public"]["Enums"]["urgency_level"]
+        }
+        Insert: {
+          camp_id: string
+          created_at?: string
+          id?: string
+          item_key: string
+          label?: string | null
+          needed_qty?: number
+          note?: string | null
+          pledged_qty?: number
+          unit?: string
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["urgency_level"]
+        }
+        Update: {
+          camp_id?: string
+          created_at?: string
+          id?: string
+          item_key?: string
+          label?: string | null
+          needed_qty?: number
+          note?: string | null
+          pledged_qty?: number
+          unit?: string
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["urgency_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camp_needs_camp_id_fkey"
+            columns: ["camp_id"]
+            isOneToOne: false
+            referencedRelation: "camps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       camp_sources: {
         Row: {
           camp_id: string
@@ -416,6 +466,57 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "districts"
             referencedColumns: ["code"]
+          },
+        ]
+      }
+      need_pledges: {
+        Row: {
+          camp_id: string
+          created_at: string
+          donor_name: string
+          donor_phone: string
+          id: string
+          ip_hash: string | null
+          need_id: string
+          phone_verified: boolean
+          quantity: number
+        }
+        Insert: {
+          camp_id: string
+          created_at?: string
+          donor_name: string
+          donor_phone: string
+          id?: string
+          ip_hash?: string | null
+          need_id: string
+          phone_verified?: boolean
+          quantity: number
+        }
+        Update: {
+          camp_id?: string
+          created_at?: string
+          donor_name?: string
+          donor_phone?: string
+          id?: string
+          ip_hash?: string | null
+          need_id?: string
+          phone_verified?: boolean
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "need_pledges_camp_id_fkey"
+            columns: ["camp_id"]
+            isOneToOne: false
+            referencedRelation: "camps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "need_pledges_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "camp_needs"
+            referencedColumns: ["id"]
           },
         ]
       }

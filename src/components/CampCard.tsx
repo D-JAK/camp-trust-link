@@ -12,9 +12,18 @@ import { googleMapsHref } from "@/components/CampMap";
 import { amenityIcon } from "@/lib/amenities";
 import { useI18n } from "@/lib/i18n";
 import { formatIst, stalenessOf } from "@/lib/format";
-import type { Camp } from "@/lib/queries";
+import type { Camp, CampNeed } from "@/lib/queries";
+import { NeedChips } from "@/components/NeedChips";
 
-export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number | null }) {
+export function CampCard({
+  camp,
+  distanceKm,
+  needs = [],
+}: {
+  camp: Camp;
+  distanceKm?: number | null;
+  needs?: CampNeed[];
+}) {
   const { t, locale } = useI18n();
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
   const secondary = locale === "ml" && camp.name_ml ? camp.name : camp.name_ml;
@@ -78,6 +87,15 @@ export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number
               );
             })}
           </ul>
+        ) : null}
+
+        {needs.length > 0 ? (
+          <div className="mt-3 rounded-lg border border-border bg-secondary/40 p-2">
+            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+              {t("need.title")}
+            </p>
+            <NeedChips needs={needs} limit={5} />
+          </div>
         ) : null}
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
