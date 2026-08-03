@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, MapPin, Phone } from "lucide-react";
-import { StalenessNote, StatusBadge, UrgencyBadge, VerificationBadge } from "@/components/badges";
+import {
+  isPreDesignated,
+  PreDesignatedBadge,
+  StalenessNote,
+  StatusBadge,
+  UrgencyBadge,
+  VerificationBadge,
+} from "@/components/badges";
 import { useI18n } from "@/lib/i18n";
 import { formatIst, stalenessOf } from "@/lib/format";
 import type { Camp } from "@/lib/queries";
@@ -40,8 +47,14 @@ export function CampCard({ camp, distanceKm }: { camp: Camp; distanceKm?: number
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <VerificationBadge state={camp.verification_state} />
-        <StatusBadge status={camp.status} />
+        {isPreDesignated(camp) ? (
+          <PreDesignatedBadge />
+        ) : (
+          <>
+            <VerificationBadge state={camp.verification_state} />
+            <StatusBadge status={camp.status} />
+          </>
+        )}
         <UrgencyBadge level={urgency} reported={urgencyIsReported} />
       </div>
 
