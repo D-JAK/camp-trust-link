@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, MapPin, Navigation, Phone, Users } from "lucide-react";
+import { Baby, ChevronRight, Clock, HomeIcon, MapPin, Navigation, Phone, Users } from "lucide-react";
+import { Hint } from "@/components/InfoTip";
 import {
   isPreDesignated,
   PreDesignatedBadge,
