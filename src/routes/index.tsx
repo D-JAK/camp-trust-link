@@ -64,7 +64,7 @@ function CampListPage() {
   const { data: lsgBodies = [] } = useQuery(lsgQuery());
 
   const setSearch = (patch: Partial<Search>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: Search) => ({ ...prev, ...patch }), replace: true });
 
   const districtRow = districts.find((d) => d.code === search.district);
   const weatherPoint = coords
