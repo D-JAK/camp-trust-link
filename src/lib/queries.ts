@@ -8,18 +8,26 @@ export type Taluk = Tables<"taluks">;
 export type LsgBody = Tables<"lsg_bodies">;
 export type EmergencyContact = Tables<"emergency_contacts">;
 
-export const campsQuery = () =>
+/**
+ * Without a district we only load camps somebody has reported as open — the
+ * pre-designated list is ~6,000 buildings and is only loaded per district.
+ */
+export const campsQuery = (districtCode?: string | null) =>
   queryOptions({
-    queryKey: ["camps"],
+    queryKey: ["camps", districtCode ?? "open"],
     staleTime: 60_000,
     refetchInterval: 5 * 60_000,
     queryFn: async (): Promise<Camp[]> => {
-      const { data, error } = await supabase
+      let request = supabase
         .from("camps")
         .select("*")
-        .in("verification_state", ["unverified", "verified"])
+        .in("verification_state", ["unverified", "verified"]);
+      request = districtCode
+        ? request.eq("district_code", districtCode)
+        : request.eq("status", "active");
+      const { data, error } = await request
         .order("updated_at", { ascending: false })
-        .limit(2000);
+        .limit(3000);
       if (error) throw new Error(error.message);
       return data ?? [];
     },

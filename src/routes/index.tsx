@@ -61,7 +61,7 @@ function CampListPage() {
   const navigate = useNavigate({ from: "/" });
   const { coords, status: geoStatus, request, clear } = useGeolocation();
 
-  const camps = useQuery(campsQuery());
+  const camps = useQuery(campsQuery(search.district || null));
   const { data: districts = [] } = useQuery(districtsQuery());
   const { data: taluks = [] } = useQuery(taluksQuery());
   const { data: lsgBodies = [] } = useQuery(lsgQuery());
