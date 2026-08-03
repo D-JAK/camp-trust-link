@@ -131,10 +131,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <I18nProvider>
-          <AppShell>
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </AppShell>
+          <TooltipProvider delayDuration={150}>
+            <AppShell>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+            </AppShell>
+          </TooltipProvider>
           <Toaster position="top-center" />
         </I18nProvider>
       </ThemeProvider>
