@@ -85,8 +85,8 @@ const en: Dict = {
   "lang.toggle": "ഭാഷ / Language",
   "tip.emergency": "Disaster helpline — call 1077",
   "crumb.camps": "Camps",
-  "detail.callBeforeUnverified.short": "Not confirmed — call first.",
-  "state.predesignatedNote.short": "On the government camp list — not reported open.",
+  "detail.callBeforeUnverified.short": "Call before you travel",
+  "state.predesignatedNote.short": "Govt list · not reported open",
 
   "disclaimer.title": "Not an official government source",
   "disclaimer.body":
