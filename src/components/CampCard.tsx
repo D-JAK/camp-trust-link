@@ -1,5 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { Baby, ChevronRight, Clock, HomeIcon, MapPin, Navigation, Phone, Users } from "lucide-react";
+import {
+  Baby,
+  ChevronRight,
+  Clock,
+  FileText,
+  HomeIcon,
+  MapPin,
+  Navigation,
+  Package as PackageIcon,
+  Phone,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import { Hint } from "@/components/InfoTip";
 import {
   isPreDesignated,
@@ -27,7 +39,7 @@ export function CampCard({
 }) {
   const { t, locale } = useI18n();
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
-  const secondary = locale === "ml" && camp.name_ml ? camp.name : camp.name_ml;
+  
   const urgency = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
   const urgencyIsReported = camp.urgency === "normal" && camp.reported_urgency !== null;
   const lat = camp.latitude != null ? Number(camp.latitude) : null;
@@ -58,12 +70,25 @@ export function CampCard({
           label: `${t("card.childrenCount")}: ${camp.reported_children_count}`,
         }
       : null,
-    camp.checkin_count > 0
+    {
+      key: "checkins",
+      Icon: UserCheck,
+      value: String(camp.checkin_count),
+      label: t("checkin.count", { count: camp.checkin_count }),
+    },
+    {
+      key: "reports",
+      Icon: FileText,
+      value: String(camp.report_count),
+      label:
+        camp.report_count === 1 ? t("detail.reportedBy.one") : t("detail.reportedBy", { count: camp.report_count }),
+    },
+    needs.length > 0
       ? {
-          key: "checkins",
-          Icon: Users,
-          value: String(camp.checkin_count),
-          label: t("checkin.count", { count: camp.checkin_count }),
+          key: "needs",
+          Icon: PackageIcon,
+          value: String(needs.length),
+          label: t("need.title"),
         }
       : null,
   ].filter(Boolean) as { key: string; Icon: typeof Users; value: string; label: string }[];
@@ -74,13 +99,12 @@ export function CampCard({
       <Link
         to="/camps/$campId"
         params={{ campId: camp.id }}
-        className="block p-4 focus-visible:bg-secondary/40 sm:p-5"
+        className="block p-3 focus-visible:bg-secondary/40 sm:p-4"
       >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold sm:text-lg">{title}</h3>
-            {secondary ? <p className="truncate text-sm text-muted-foreground">{secondary}</p> : null}
-            <p className="mt-1 truncate text-xs text-muted-foreground">
+            <h3 className="truncate text-base font-semibold">{title}</h3>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
               {[camp.district_code, camp.taluk, camp.lsg_name, camp.village_or_locality]
                 .filter(Boolean)
                 .join(" › ")}
@@ -120,7 +144,7 @@ export function CampCard({
 
         {(camp.amenities ?? []).length > 0 ? (
           <ul className="mt-2 flex flex-wrap items-center gap-1.5">
-            {(camp.amenities ?? []).slice(0, 8).map((key) => {
+            {(camp.amenities ?? []).slice(0, 6).map((key) => {
               const Icon = amenityIcon(key);
               return (
                 <li key={key}>
@@ -133,25 +157,22 @@ export function CampCard({
                 </li>
               );
             })}
-            {(camp.amenities ?? []).length > 8 ? (
+            {(camp.amenities ?? []).length > 6 ? (
               <li className="text-[11px] font-semibold text-muted-foreground">
-                +{(camp.amenities ?? []).length - 8}
+                +{(camp.amenities ?? []).length - 6}
               </li>
             ) : null}
           </ul>
         ) : null}
 
         {needs.length > 0 ? (
-          <div className="mt-3 rounded-lg border border-border bg-secondary/40 p-2">
-            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-              {t("need.title")}
-            </p>
+          <div className="mt-2">
             <NeedChips needs={needs} limit={5} />
           </div>
         ) : null}
 
         {camp.status_last_confirmed_at ? (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="size-3.5" />
@@ -168,22 +189,30 @@ export function CampCard({
         {camp.camp_phone_primary ? (
           <a
             href={`tel:${camp.camp_phone_primary}`}
-            className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
+            className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2 text-xs font-semibold hover:bg-secondary"
           >
             <Phone className="size-3.5 text-accent" />
             {camp.camp_phone_primary}
           </a>
         ) : null}
-        <a
-          href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
-          target="_blank"
-          rel="noreferrer"
-          className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
-        >
-          <Navigation className="size-3.5 text-accent" />
-          {t("map.openGoogle")}
-        </a>
+        <Hint label={t("map.openGoogle")}>
+          <a
+            href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={t("map.openGoogle")}
+            className={
+              camp.camp_phone_primary
+                ? "flex w-14 items-center justify-center bg-card py-2 hover:bg-secondary"
+                : "flex flex-1 items-center justify-center gap-1.5 bg-card py-2 text-xs font-semibold hover:bg-secondary"
+            }
+          >
+            <Navigation className="size-4 text-accent" />
+            {camp.camp_phone_primary ? null : t("map.openGoogle")}
+          </a>
+        </Hint>
       </div>
+
     </article>
   );
 }

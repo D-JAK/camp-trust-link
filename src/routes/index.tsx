@@ -416,7 +416,7 @@ function CampListPage() {
             </div>
           ) : (
             <>
-              <ul className={cn(search.view === "list" ? "space-y-2" : "grid gap-3 xl:grid-cols-2")}>
+              <ul className={cn(search.view === "list" ? "space-y-2" : "grid grid-cols-2 gap-3")}>
                 {pageRows.map(({ camp, distanceKm }) => (
                   <li key={camp.id}>
                     {search.view === "list" ? (
