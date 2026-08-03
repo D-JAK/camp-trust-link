@@ -18,7 +18,6 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
   const [note, setNote] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const [people, setPeople] = useState("");
-  const [families, setFamilies] = useState("");
   const [children, setChildren] = useState("");
   const [amenities, setAmenities] = useState<AmenityKey[]>([]);
   const [busy, setBusy] = useState(false);
@@ -50,7 +49,7 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
           isOpen,
           note: note.trim() || null,
           peopleCount: toCount(people),
-          familyCount: toCount(families),
+          familyCount: 1,
           childrenCount: toCount(children),
           amenities,
         },
@@ -136,11 +135,11 @@ export function CheckInCard({ campId, count }: { campId: string; count: number }
             <legend className="px-1 text-xs font-semibold text-muted-foreground">
               {t("checkin.occupancy")}
             </legend>
-            <div className="grid grid-cols-3 gap-2">
+            <p className="mb-2 text-xs text-muted-foreground">{t("checkin.occupancyHint")}</p>
+            <div className="grid grid-cols-2 gap-2">
               {(
                 [
                   ["checkin.people", people, setPeople],
-                  ["checkin.families", families, setFamilies],
                   ["checkin.children", children, setChildren],
                 ] as const
               ).map(([label, value, setValue]) => (
