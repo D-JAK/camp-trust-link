@@ -51,7 +51,7 @@ const emptySearch: Search = {
 };
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): Search => ({
+  validateSearch: (search: Partial<Search> & Record<string, unknown>): Search => ({
     district: typeof search["district"] === "string" ? search["district"] : "",
     taluk: typeof search["taluk"] === "string" ? search["taluk"] : "",
     lsg: typeof search["lsg"] === "string" ? search["lsg"] : "",
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/")({
       search["status"] === "all"
         ? search["status"]
         : "active",
-    verified: search["verified"] === true || search["verified"] === "true",
+    verified: search["verified"] === true || String(search["verified"]) === "true",
     q: typeof search["q"] === "string" ? search["q"].slice(0, 80) : "",
     amenities: typeof search["amenities"] === "string" ? search["amenities"].slice(0, 200) : "",
     view: search["view"] === "list" ? "list" : "card",
@@ -225,7 +225,7 @@ function CampListPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-2xl font-bold sm:text-3xl">
