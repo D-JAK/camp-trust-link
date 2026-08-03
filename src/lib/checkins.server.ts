@@ -8,6 +8,10 @@ export type CheckInInput = {
   note?: string | null | undefined;
   latitude?: number | null | undefined;
   longitude?: number | null | undefined;
+  peopleCount?: number | null | undefined;
+  familyCount?: number | null | undefined;
+  childrenCount?: number | null | undefined;
+  amenities?: string[] | undefined;
 };
 
 export type CheckInResult =
@@ -26,6 +30,10 @@ export async function recordCheckIn(input: CheckInInput, ip: string): Promise<Ch
     note: input.note ?? null,
     latitude: input.latitude ?? null,
     longitude: input.longitude ?? null,
+    people_count: input.peopleCount ?? null,
+    family_count: input.familyCount ?? null,
+    children_count: input.childrenCount ?? null,
+    amenities: input.amenities ?? [],
   });
 
   if (error) {
@@ -48,7 +56,7 @@ export async function recordCheckIn(input: CheckInInput, ip: string): Promise<Ch
 export async function recentCheckIns(campId: string) {
   const { data } = await supabaseAdmin
     .from("camp_checkins")
-    .select("id, is_open, note, created_at, phone")
+    .select("id, is_open, note, created_at, phone, people_count, family_count, children_count, amenities")
     .eq("camp_id", campId)
     .order("created_at", { ascending: false })
     .limit(8);
@@ -58,6 +66,10 @@ export async function recentCheckIns(campId: string) {
     isOpen: row.is_open,
     note: row.note,
     createdAt: row.created_at,
+    peopleCount: row.people_count,
+    familyCount: row.family_count,
+    childrenCount: row.children_count,
+    amenities: row.amenities ?? [],
     // Never expose full numbers publicly.
     phoneMasked: `••••• ${String(row.phone).slice(-4)}`,
   }));
