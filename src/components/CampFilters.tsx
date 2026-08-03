@@ -43,7 +43,7 @@ export function CampFilters({
     value.lsg ||
     value.q ||
     value.verified ||
-    value.status !== "active" ||
+    value.status !== "predesignated" ||
     value.amenities.length > 0;
 
   const toggleAmenity = (key: AmenityKey) =>
