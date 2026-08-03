@@ -32,10 +32,12 @@ export function CampCard({
   camp,
   distanceKm,
   needs = [],
+  needsOnly = false,
 }: {
   camp: Camp;
   distanceKm?: number | null;
   needs?: CampNeed[];
+  needsOnly?: boolean;
 }) {
   const { t, locale } = useI18n();
   const title = locale === "ml" && camp.name_ml ? camp.name_ml : camp.name;
@@ -123,11 +125,11 @@ export function CampCard({
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <VerificationBadge state={camp.verification_state} />
-          {isPreDesignated(camp) ? <PreDesignatedBadge /> : <StatusBadge status={camp.status} />}
-          <UrgencyBadge level={urgency} reported={urgencyIsReported} />
+          {isPreDesignated(camp) ? <PreDesignatedBadge /> : needsOnly ? null : <StatusBadge status={camp.status} />}
+          {needsOnly ? null : <UrgencyBadge level={urgency} reported={urgencyIsReported} />}
         </div>
 
-        {stats.length > 0 ? (
+        {!needsOnly && stats.length > 0 ? (
           <ul className="mt-2 flex flex-wrap items-center gap-1.5">
             {stats.map(({ key, Icon, value, label }) => (
               <li key={key}>
@@ -142,7 +144,7 @@ export function CampCard({
           </ul>
         ) : null}
 
-        {(camp.amenities ?? []).length > 0 ? (
+        {!needsOnly && (camp.amenities ?? []).length > 0 ? (
           <ul className="mt-2 flex flex-wrap items-center gap-1.5">
             {(camp.amenities ?? []).slice(0, 6).map((key) => {
               const Icon = amenityIcon(key);
@@ -171,7 +173,7 @@ export function CampCard({
           </div>
         ) : null}
 
-        {camp.status_last_confirmed_at ? (
+        {!needsOnly && camp.status_last_confirmed_at ? (
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
