@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Compass, Filter, RefreshCw, Search, ShieldCheck, X } from "lucide-react";
-import { useMemo } from "react";
+import { Compass, Filter, Map as MapIcon, RefreshCw, Search, ShieldCheck, X } from "lucide-react";
+import { useMemo, useState } from "react";
 import { CampCard } from "@/components/CampCard";
+import { CampMap, type MapPoint } from "@/components/CampMap";
 import { isPreDesignated } from "@/components/badges";
 import { WeatherPanel } from "@/components/WeatherPanel";
 import { useI18n } from "@/lib/i18n";
