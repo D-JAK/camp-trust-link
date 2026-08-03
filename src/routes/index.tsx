@@ -102,7 +102,7 @@ function CampListPage() {
   const { data: taluks = [] } = useQuery(taluksQuery());
   const { data: lsgBodies = [] } = useQuery(lsgQuery());
 
-  const amenityFilters = useMemo(
+  const amenityFilters = useMemo<string[]>(
     () => search.amenities.split(",").filter(Boolean),
     [search.amenities],
   );
@@ -133,7 +133,7 @@ function CampListPage() {
       if (search.verified && camp.verification_state !== "verified") return false;
       if (amenityFilters.length > 0) {
         const available = camp.amenities ?? [];
-        if (!amenityFilters.every((key) => available.includes(key))) return false;
+        if (!amenityFilters.every((key: string) => available.includes(key))) return false;
       }
       if (search.tab === "requirements") {
         const level = camp.urgency !== "normal" ? camp.urgency : (camp.reported_urgency ?? "normal");
