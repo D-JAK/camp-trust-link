@@ -236,13 +236,23 @@ function CampListPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-2 border-b border-border bg-background/95 px-4 pb-3 pt-2 backdrop-blur sm:-mx-6 sm:px-6">
+      <Breadcrumbs
+        items={[
+          { label: t("crumb.camps"), to: "/" },
+          ...(districtRow
+            ? [{ label: locale === "ml" && districtRow.name_ml ? districtRow.name_ml : districtRow.name, to: "/", search: { district: districtRow.code } }]
+            : []),
+          ...(search.taluk ? [{ label: search.taluk }] : []),
+          ...(search.lsg ? [{ label: search.lsg }] : []),
+        ]}
+      />
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-        <div className="min-w-0">
-          <h1 className="font-display text-2xl font-bold sm:text-3xl">
+        <div className="flex min-w-0 items-baseline gap-2">
+          <h1 className="truncate font-display text-2xl font-bold sm:text-3xl">
             {coords ? t("list.nearYou") : t("list.title")}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("list.count", { count: rows.length })}</p>
+          <span className="shrink-0 text-sm text-muted-foreground">{rows.length}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <button
