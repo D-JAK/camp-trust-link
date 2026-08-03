@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowUp, LifeBuoy, Languages, MapPinned, Moon, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
+import { ArrowUp, Clock, LifeBuoy, Languages, MapPinned, Moon, PhoneCall, Plus, Sun, WifiOff } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { InfoTip, Hint } from "@/components/InfoTip";
 import { useI18n } from "@/lib/i18n";
