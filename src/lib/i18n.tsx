@@ -400,7 +400,7 @@ const ml: Dict = {
   "filter.status": "അവസ്ഥ",
   "filter.statusActive": "ഇപ്പോൾ തുറന്നത്",
   "filter.statusInactive": "അടച്ചത്",
-  "filter.statusPredesignated": "മുൻകൂട്ടി നിശ്ചയിച്ചവ",
+  "filter.statusPredesignated": "സർക്കാർ പട്ടിക",
   "filter.statusAll": "എല്ലാം",
   "filter.verifiedOnly": "സ്ഥിരീകരിച്ചവ മാത്രം",
   "filter.search": "ക്യാമ്പ്, സ്ഥലം അല്ലെങ്കിൽ അടയാളം തിരയുക",
