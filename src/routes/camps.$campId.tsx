@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { CampMap, googleMapsHref } from "@/components/CampMap";
+import { CheckInCard } from "@/components/CheckInCard";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
 import {
   isPreDesignated,
