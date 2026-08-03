@@ -298,7 +298,10 @@ function CampDetailPage() {
         ) : null}
       </section>
 
+      <CampNeeds campId={camp.id} />
+
       <CheckInCard campId={camp.id} count={camp.checkin_count ?? 0} />
+
 
       <EmergencyContacts districtCode={camp.district_code} />
 
