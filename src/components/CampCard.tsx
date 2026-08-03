@@ -58,12 +58,25 @@ export function CampCard({
           label: `${t("card.childrenCount")}: ${camp.reported_children_count}`,
         }
       : null,
-    camp.checkin_count > 0
+    {
+      key: "checkins",
+      Icon: UserCheck,
+      value: String(camp.checkin_count),
+      label: t("checkin.count", { count: camp.checkin_count }),
+    },
+    {
+      key: "reports",
+      Icon: FileText,
+      value: String(camp.report_count),
+      label:
+        camp.report_count === 1 ? t("detail.reportedBy.one") : t("detail.reportedBy", { count: camp.report_count }),
+    },
+    needs.length > 0
       ? {
-          key: "checkins",
-          Icon: Users,
-          value: String(camp.checkin_count),
-          label: t("checkin.count", { count: camp.checkin_count }),
+          key: "needs",
+          Icon: PackageIcon,
+          value: String(needs.length),
+          label: t("need.title"),
         }
       : null,
   ].filter(Boolean) as { key: string; Icon: typeof Users; value: string; label: string }[];
