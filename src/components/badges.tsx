@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, CircleAlert, DoorClosed, DoorOpen, Clock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleAlert, DoorClosed, DoorOpen, Clock, Landmark } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { Staleness } from "@/lib/format";
