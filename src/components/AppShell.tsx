@@ -75,18 +75,23 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur lg:hidden">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5">
             <Wordmark />
-            <a
-              href="tel:1077"
-              className="tap-target inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
-            >
-              <PhoneCall className="size-4" />
-              1077
-            </a>
+            <Hint label={t("tip.emergency")}>
+              <a
+                href="tel:1077"
+                className="tap-target inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
+              >
+                <PhoneCall className="size-4" />
+                1077
+              </a>
+            </Hint>
           </div>
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-            <span className="truncate text-[0.7rem] text-muted-foreground">
-              {t("freshness.updated", { time: formatIst(updatedAt) })}
-            </span>
+            <Hint label={t("freshness.updated", { time: formatIst(updatedAt) })}>
+              <span className="inline-flex items-center gap-1.5 truncate text-[0.7rem] text-muted-foreground">
+                <Clock className="size-3.5" />
+                {formatIst(updatedAt)}
+              </span>
+            </Hint>
             <Toggles />
           </div>
         </header>
