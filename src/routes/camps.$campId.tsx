@@ -184,17 +184,13 @@ function CampDetailPage() {
           </a>
         </div>
         {lat !== null && lng !== null ? (
-          <div className="relative h-64 w-full border-t border-border">
-            <iframe
-              title={title}
-              className="size-full"
-              loading="lazy"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.008}%2C${lng + 0.01}%2C${lat + 0.008}&layer=mapnik&marker=${lat}%2C${lng}`}
+          <div className="border-t border-border">
+            <CampMap
+              points={[{ id: camp.id, lat, lng, title, subtitle: camp.landmark ?? camp.lsg_name }]}
+              center={{ lat, lng }}
+              zoom={16}
+              className="h-64"
             />
-            <span className="pointer-events-none absolute left-1/2 top-1/2 size-5 -translate-x-1/2 -translate-y-1/2">
-              <span className="marker-pulse absolute inset-0 rounded-full bg-accent" />
-              <span className="absolute inset-1 rounded-full bg-accent ring-2 ring-accent-foreground" />
-            </span>
           </div>
         ) : (
           <p className="border-t border-border p-4 text-sm text-muted-foreground">
