@@ -56,6 +56,9 @@ const en: Dict = {
   "amenity.pets_allowed": "Pets allowed",
   "detail.inside": "Inside the camp",
   "detail.occupancy": "People staying",
+  "card.childrenCount": "Children reported",
+  "card.updatedOccupancy": "Occupancy last updated",
+  "card.amenitiesTitle": "Reported facilities",
   "detail.amenitiesNone": "Nobody has reported facilities yet. Check in to add them.",
   "detail.reportedAt": "Reported {time}",
 
@@ -320,6 +323,9 @@ const ml: Dict = {
   "amenity.pets_allowed": "വളർത്തുമൃഗങ്ങൾ അനുവദനീയം",
   "detail.inside": "ക്യാമ്പിനുള്ളിൽ",
   "detail.occupancy": "താമസിക്കുന്നവർ",
+  "card.childrenCount": "റിപ്പോർട്ട് ചെയ്ത കുട്ടികൾ",
+  "card.updatedOccupancy": "അവസാനം അപ്ഡേറ്റ് ചെയ്തത്",
+  "card.amenitiesTitle": "റിപ്പോർട്ട് ചെയ്ത സൗകര്യങ്ങൾ",
   "detail.amenitiesNone": "സൗകര്യങ്ങൾ ആരും റിപ്പോർട്ട് ചെയ്തിട്ടില്ല. ചെക്ക് ഇൻ ചെയ്ത് ചേർക്കുക.",
   "detail.reportedAt": "{time} ന് റിപ്പോർട്ട് ചെയ്തു",
 
