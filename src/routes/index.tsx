@@ -257,26 +257,32 @@ function CampListPage() {
           <span className="shrink-0 text-sm text-muted-foreground">{rows.length}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowMap((value) => !value)}
-            aria-pressed={showMap}
-            className={cn(
-              "tap-target inline-flex items-center gap-2 rounded-lg border px-3 text-sm font-semibold",
-              showMap ? "border-accent bg-accent text-accent-foreground" : "border-border hover:bg-secondary",
-            )}
-          >
-            <MapIcon className="size-4" />
-            <span className="hidden sm:inline">{showMap ? t("map.hide") : t("map.show")}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => camps.refetch()}
-            className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
-          >
-            <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
-            <span className="hidden sm:inline">{t("action.refresh")}</span>
-          </button>
+          <Hint label={showMap ? t("map.hide") : t("map.show")}>
+            <button
+              type="button"
+              onClick={() => setShowMap((value) => !value)}
+              aria-pressed={showMap}
+              aria-label={showMap ? t("map.hide") : t("map.show")}
+              className={cn(
+                "tap-target inline-flex items-center gap-2 rounded-lg border px-3 text-sm font-semibold",
+                showMap ? "border-accent bg-accent text-accent-foreground" : "border-border hover:bg-secondary",
+              )}
+            >
+              <MapIcon className="size-4" />
+              <span className="hidden sm:inline">{showMap ? t("map.hide") : t("map.show")}</span>
+            </button>
+          </Hint>
+          <Hint label={t("action.refresh")}>
+            <button
+              type="button"
+              onClick={() => camps.refetch()}
+              aria-label={t("action.refresh")}
+              className="tap-target inline-flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold hover:bg-secondary"
+            >
+              <RefreshCw className={cn("size-4", camps.isFetching && "animate-spin")} />
+              <span className="hidden sm:inline">{t("action.refresh")}</span>
+            </button>
+          </Hint>
         </div>
       </header>
 
@@ -288,19 +294,20 @@ function CampListPage() {
           className="inline-flex rounded-full border border-border bg-surface p-1"
         >
           {(["camps", "requirements"] as const).map((tab) => (
-            <button
-              key={tab}
-              role="tab"
-              type="button"
-              aria-selected={search.tab === tab}
-              onClick={() => setSearch({ tab })}
-              className={cn(
-                "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
-                search.tab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              {t(tab === "camps" ? "tab.camps" : "tab.requirements")}
-            </button>
+            <Hint key={tab} label={t(tab === "camps" ? "list.title" : "tab.requirementsHint")}>
+              <button
+                role="tab"
+                type="button"
+                aria-selected={search.tab === tab}
+                onClick={() => setSearch({ tab })}
+                className={cn(
+                  "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+                  search.tab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
+                )}
+              >
+                {t(tab === "camps" ? "tab.camps" : "tab.requirements")}
+              </button>
+            </Hint>
           ))}
         </div>
 
