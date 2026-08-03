@@ -225,7 +225,7 @@ function CampListPage() {
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-[5.4rem] z-20 -mx-4 lg:top-[3.6rem] space-y-3 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-2xl font-bold sm:text-3xl">
