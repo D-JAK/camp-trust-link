@@ -95,17 +95,27 @@ function CampDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" />
-        {t("action.back")}
-      </Link>
+      <div className="sticky top-[5.4rem] z-20 -mx-4 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 lg:top-[3.6rem]">
+        <Link
+          to="/"
+          aria-label={t("action.back")}
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg border border-border hover:bg-secondary"
+        >
+          <ArrowLeft className="size-4" />
+        </Link>
+        <Breadcrumbs
+          items={[
+            { label: t("crumb.camps"), to: "/" },
+            { label: districtName, to: "/", search: { district: camp.district_code } },
+            ...(camp.taluk ? [{ label: camp.taluk, to: "/", search: { district: camp.district_code, taluk: camp.taluk } }] : []),
+            { label: title },
+          ]}
+        />
+      </div>
 
       <header className="panel p-4 sm:p-5">
         <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
         {camp.name_ml && locale !== "ml" ? <p className="text-base text-muted-foreground">{camp.name_ml}</p> : null}
-        <p className="mt-1 text-sm text-muted-foreground">
-          {[districtName, camp.taluk, camp.lsg_name, camp.village_or_locality].filter(Boolean).join(" › ")}
-        </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {preDesignated ? (
             <PreDesignatedBadge />
@@ -117,36 +127,43 @@ function CampDetailPage() {
           )}
           <UrgencyBadge level={urgency} reported={camp.urgency === "normal" && camp.reported_urgency !== null} />
         </div>
-        <div className="mt-3 space-y-1 border-t border-border pt-3 text-sm">
-          <p className="text-muted-foreground">
-            {t("detail.lastConfirmed")}: <strong className="text-foreground">{formatIst(camp.status_last_confirmed_at)} IST</strong>
-          </p>
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-3 text-sm text-muted-foreground">
+          <Hint label={t("detail.lastConfirmed")}>
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="size-4" />
+              <strong className="font-semibold text-foreground">{formatIst(camp.status_last_confirmed_at)}</strong>
+            </span>
+          </Hint>
           <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
           {camp.report_count > 0 ? (
-            <p className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <Users className="size-4" />
-              {camp.report_count === 1 ? t("detail.reportedBy.one") : t("detail.reportedBy", { count: camp.report_count })}
-            </p>
+            <Hint label={camp.report_count === 1 ? t("detail.reportedBy.one") : t("detail.reportedBy", { count: camp.report_count })}>
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="size-4" />
+                {camp.report_count}
+              </span>
+            </Hint>
           ) : null}
         </div>
       </header>
 
       {preDesignated ? (
-        <p className="rounded-xl border-2 border-unverified bg-unverified-soft p-4 text-sm font-semibold text-unverified">
-          {t("state.predesignatedNote")}
-        </p>
+        <div className="flex items-center gap-1.5 rounded-xl border-2 border-unverified bg-unverified-soft px-4 py-2.5 text-sm font-semibold text-unverified">
+          <span>{t("state.predesignatedNote.short")}</span>
+          <InfoTip label={t("state.predesignatedNote")} className="text-unverified" />
+        </div>
       ) : null}
 
       {/* GUARD-2 */}
-      <p
+      <div
         className={
           unverified
-            ? "rounded-xl border-2 border-unverified bg-unverified-soft p-4 text-sm font-semibold text-unverified"
-            : "rounded-xl border border-border bg-secondary p-3 text-sm font-medium"
+            ? "flex items-center gap-1.5 rounded-xl border-2 border-unverified bg-unverified-soft px-4 py-2.5 text-sm font-semibold text-unverified"
+            : "rounded-xl border border-border bg-secondary px-4 py-2.5 text-sm font-medium"
         }
       >
-        {unverified ? t("detail.callBeforeUnverified") : t("detail.callBefore")}
-      </p>
+        <span>{unverified ? t("detail.callBeforeUnverified.short") : t("detail.callBefore")}</span>
+        {unverified ? <InfoTip label={t("detail.callBeforeUnverified")} className="text-unverified" /> : null}
+      </div>
 
       <section className="panel p-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("detail.contact")}</h2>
