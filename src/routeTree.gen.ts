@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HelplinesRouteImport } from './routes/helplines'
+import { Route as CampsCampIdRouteImport } from './routes/camps.$campId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const HelplinesRoute = HelplinesRouteImport.update({
   path: '/helplines',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampsCampIdRoute = CampsCampIdRouteImport.update({
+  id: '/camps/$campId',
+  path: '/camps/$campId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/camps/$campId': typeof CampsCampIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/camps/$campId': typeof CampsCampIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/helplines': typeof HelplinesRoute
+  '/camps/$campId': typeof CampsCampIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/helplines'
+  fullPaths: '/' | '/helplines' | '/camps/$campId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/helplines'
-  id: '__root__' | '/' | '/helplines'
+  to: '/' | '/helplines' | '/camps/$campId'
+  id: '__root__' | '/' | '/helplines' | '/camps/$campId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HelplinesRoute: typeof HelplinesRoute
+  CampsCampIdRoute: typeof CampsCampIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelplinesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/camps/$campId': {
+      id: '/camps/$campId'
+      path: '/camps/$campId'
+      fullPath: '/camps/$campId'
+      preLoaderRoute: typeof CampsCampIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HelplinesRoute: HelplinesRoute,
+  CampsCampIdRoute: CampsCampIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
