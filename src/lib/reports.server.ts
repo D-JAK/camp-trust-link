@@ -9,38 +9,36 @@ type CampStatus = Database["public"]["Enums"]["camp_status"];
 type Relationship = Database["public"]["Enums"]["reporter_relationship"];
 type Gender = Database["public"]["Enums"]["reporter_gender"];
 
-type Optional<T> = { [K in keyof T]: T[K] | undefined };
-
-export type ReportPayload = Optional<{
-  campId?: string | null;
-  isCorrection?: boolean;
-  correctionNote?: string | null;
+export type ReportPayload = {
+  campId?: string | null | undefined;
+  isCorrection?: boolean | undefined;
+  correctionNote?: string | null | undefined;
   name: string;
-  nameMl?: string | null;
-  buildingType?: BuildingType | null;
+  nameMl?: string | null | undefined;
+  buildingType?: BuildingType | null | undefined;
   districtCode: string;
   taluk: string;
   lsgType: LsgType;
   lsgName: string;
-  villageOrLocality?: string | null;
-  landmark?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  locationAccuracyM?: number | null;
-  campInchargeName?: string | null;
-  campPhonePrimary?: string | null;
-  campPhoneSecondary?: string | null;
+  villageOrLocality?: string | null | undefined;
+  landmark?: string | null | undefined;
+  latitude?: number | null | undefined;
+  longitude?: number | null | undefined;
+  locationAccuracyM?: number | null | undefined;
+  campInchargeName?: string | null | undefined;
+  campPhonePrimary?: string | null | undefined;
+  campPhoneSecondary?: string | null | undefined;
   reportedStatus: CampStatus;
   reportedUrgency: Urgency;
-  reportedUrgencyReason?: string | null;
+  reportedUrgencyReason?: string | null | undefined;
   reporterName: string;
   reporterPhonePrimary: string;
-  reporterPhoneSecondary?: string | null;
-  reporterGender?: Gender | null;
-  reporterRelationship?: Relationship | null;
+  reporterPhoneSecondary?: string | null | undefined;
+  reporterGender?: Gender | null | undefined;
+  reporterRelationship?: Relationship | null | undefined;
   deviceLocationGranted: boolean;
-  challengeId?: string | null;
-  otpCode?: string | null;
+  challengeId?: string | null | undefined;
+  otpCode?: string | null | undefined;
   images: Array<{
     dataUrl: string;
     width: number;
@@ -51,7 +49,7 @@ export type ReportPayload = Optional<{
     exifLng?: number | null;
     exifCapturedAt?: string | null;
     qualityReasons: string[];
-  }>;
+  };
 }>;
 
 const OTP_TTL_MS = 10 * 60_000;
