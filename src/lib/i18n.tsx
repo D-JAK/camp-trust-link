@@ -48,6 +48,7 @@ const en: Dict = {
   "list.count": "{count} camps",
   "list.empty": "No camps match these filters.",
   "list.emptyHint": "Try clearing filters or choosing a different district.",
+  "list.pickDistrict": "Choose a district to see the pre-designated camp buildings for that area.",
   "list.loading": "Loading camps…",
 
   "filter.district": "District",
@@ -216,6 +217,7 @@ const ml: Dict = {
   "list.count": "{count} ക്യാമ്പുകൾ",
   "list.empty": "ഈ ഫിൽട്ടറുകൾക്ക് ക്യാമ്പുകളൊന്നുമില്ല.",
   "list.emptyHint": "ഫിൽട്ടറുകൾ മായ്ക്കുകയോ മറ്റൊരു ജില്ല തിരഞ്ഞെടുക്കുകയോ ചെയ്യുക.",
+  "list.pickDistrict": "ആ പ്രദേശത്തെ മുൻകൂട്ടി നിശ്ചയിച്ച ക്യാമ്പ് കെട്ടിടങ്ങൾ കാണാൻ ഒരു ജില്ല തിരഞ്ഞെടുക്കുക.",
   "list.loading": "ക്യാമ്പുകൾ ലോഡ് ചെയ്യുന്നു…",
 
   "filter.district": "ജില്ല",
