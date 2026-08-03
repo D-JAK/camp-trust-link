@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { AMENITY_KEYS } from "./amenities";
 
 const schema = z.object({
   campId: z.string().uuid(),
@@ -9,6 +10,10 @@ const schema = z.object({
   note: z.string().max(280).nullable().optional(),
   latitude: z.number().min(-90).max(90).nullable().optional(),
   longitude: z.number().min(-180).max(180).nullable().optional(),
+  peopleCount: z.number().int().min(0).max(20000).nullable().optional(),
+  familyCount: z.number().int().min(0).max(5000).nullable().optional(),
+  childrenCount: z.number().int().min(0).max(10000).nullable().optional(),
+  amenities: z.array(z.enum(AMENITY_KEYS as [string, ...string[]])).max(20).optional(),
 });
 
 function callerIp(): string {
