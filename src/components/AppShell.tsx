@@ -68,40 +68,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen lg:flex">
-      {/* Desktop / tablet sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-surface p-4 lg:flex">
-        <Wordmark />
-        <nav className="mt-6 flex flex-col gap-1">
-          {navItems.map((item) => {
-            const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  "tap-target flex items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
-                  active ? "bg-primary text-primary-foreground" : "hover:bg-secondary",
-                )}
-              >
-                <item.icon className="size-4 shrink-0" />
-                {t(item.labelKey)}
-              </Link>
-            );
-          })}
-        </nav>
-        <a
-          href="tel:1077"
-          className="tap-target mt-4 flex items-center justify-center gap-2 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
-        >
-          <PhoneCall className="size-4" />
-          1077
-        </a>
-        <p className="mt-auto text-[0.7rem] leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">{t("disclaimer.title")}.</span> {t("disclaimer.body")}
-        </p>
-      </aside>
-
+    <div className="min-h-screen">
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile header */}
         <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur lg:hidden">
@@ -123,12 +90,42 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        {/* Desktop header */}
-        <header className="sticky top-0 z-30 hidden items-center justify-between gap-4 border-b border-border bg-surface/95 px-6 py-3 backdrop-blur lg:flex">
-          <span className="text-xs text-muted-foreground">
-            {t("freshness.updated", { time: formatIst(updatedAt) })}
-          </span>
-          <Toggles />
+        {/* Desktop header with inline nav */}
+        <header className="sticky top-0 z-30 hidden border-b border-border bg-surface/95 backdrop-blur lg:block">
+          <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-6 py-3">
+            <Wordmark />
+            <nav className="flex items-center gap-1">
+              {navItems.map((item) => {
+                const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      "tap-target inline-flex items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors",
+                      active ? "bg-primary text-primary-foreground" : "hover:bg-secondary",
+                    )}
+                  >
+                    <item.icon className="size-4 shrink-0" />
+                    {t(item.labelKey)}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="ml-auto flex items-center gap-2">
+              <span className="hidden text-xs text-muted-foreground xl:inline">
+                {t("freshness.updated", { time: formatIst(updatedAt) })}
+              </span>
+              <Toggles />
+              <a
+                href="tel:1077"
+                className="tap-target inline-flex items-center gap-1.5 rounded-lg bg-critical px-3 text-sm font-bold text-critical-foreground"
+              >
+                <PhoneCall className="size-4" />
+                1077
+              </a>
+            </div>
+          </div>
         </header>
 
         {!online ? (
@@ -141,11 +138,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : null}
 
         {/* GUARD-3: persistent, non-dismissible */}
-        <p className="border-b border-border bg-secondary px-4 py-2 text-[0.72rem] leading-relaxed text-secondary-foreground lg:hidden">
+        <p className="border-b border-border bg-secondary px-4 py-2 text-[0.72rem] leading-relaxed text-secondary-foreground lg:px-6">
           <span className="font-semibold">{t("disclaimer.title")}.</span> {t("disclaimer.body")}
         </p>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-28 pt-4 sm:px-6 lg:pb-12">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 sm:px-6 lg:pb-12">{children}</main>
+
 
         {/* Mobile bottom nav */}
         <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t border-border bg-surface/98 backdrop-blur lg:hidden">
