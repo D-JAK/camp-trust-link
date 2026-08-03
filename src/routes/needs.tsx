@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Hint, InfoTip } from "@/components/InfoTip";
 import { useI18n } from "@/lib/i18n";
 import { needIcon } from "@/lib/needs";
-import { campsByIdsQuery, districtsQuery, needsQuery } from "@/lib/queries";
+import { campsByIdsQuery, districtsQuery, needsQuery, type Camp } from "@/lib/queries";
 
 export const Route = createFileRoute("/needs")({
   head: () => ({
@@ -41,7 +41,8 @@ function NeedsPage() {
 
   const campIds = useMemo(() => Array.from(new Set(needs.map((n) => n.camp_id))), [needs]);
   const { data: camps = [] } = useQuery(campsByIdsQuery(campIds));
-  const campById = useMemo(() => new Map(camps.map((c) => [c.id, c])), [camps]);
+  const campList = camps as Camp[];
+  const campById = useMemo(() => new Map(campList.map((c) => [c.id, c])), [campList]);
 
   const rows = useMemo(
     () =>
