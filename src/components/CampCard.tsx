@@ -144,7 +144,7 @@ export function CampCard({
 
         {(camp.amenities ?? []).length > 0 ? (
           <ul className="mt-2 flex flex-wrap items-center gap-1.5">
-            {(camp.amenities ?? []).slice(0, 8).map((key) => {
+            {(camp.amenities ?? []).slice(0, 6).map((key) => {
               const Icon = amenityIcon(key);
               return (
                 <li key={key}>
@@ -157,25 +157,22 @@ export function CampCard({
                 </li>
               );
             })}
-            {(camp.amenities ?? []).length > 8 ? (
+            {(camp.amenities ?? []).length > 6 ? (
               <li className="text-[11px] font-semibold text-muted-foreground">
-                +{(camp.amenities ?? []).length - 8}
+                +{(camp.amenities ?? []).length - 6}
               </li>
             ) : null}
           </ul>
         ) : null}
 
         {needs.length > 0 ? (
-          <div className="mt-3 rounded-lg border border-border bg-secondary/40 p-2">
-            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-              {t("need.title")}
-            </p>
+          <div className="mt-2">
             <NeedChips needs={needs} limit={5} />
           </div>
         ) : null}
 
         {camp.status_last_confirmed_at ? (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="size-3.5" />
@@ -192,22 +189,30 @@ export function CampCard({
         {camp.camp_phone_primary ? (
           <a
             href={`tel:${camp.camp_phone_primary}`}
-            className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
+            className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2 text-xs font-semibold hover:bg-secondary"
           >
             <Phone className="size-3.5 text-accent" />
             {camp.camp_phone_primary}
           </a>
         ) : null}
-        <a
-          href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
-          target="_blank"
-          rel="noreferrer"
-          className="flex flex-1 items-center justify-center gap-1.5 bg-card py-2.5 text-xs font-semibold hover:bg-secondary"
-        >
-          <Navigation className="size-3.5 text-accent" />
-          {t("map.openGoogle")}
-        </a>
+        <Hint label={t("map.openGoogle")}>
+          <a
+            href={googleMapsHref(lat, lng, `${camp.name}, ${camp.lsg_name}, Kerala`)}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={t("map.openGoogle")}
+            className={
+              camp.camp_phone_primary
+                ? "flex w-14 items-center justify-center bg-card py-2 hover:bg-secondary"
+                : "flex flex-1 items-center justify-center gap-1.5 bg-card py-2 text-xs font-semibold hover:bg-secondary"
+            }
+          >
+            <Navigation className="size-4 text-accent" />
+            {camp.camp_phone_primary ? null : t("map.openGoogle")}
+          </a>
+        </Hint>
       </div>
+
     </article>
   );
 }
