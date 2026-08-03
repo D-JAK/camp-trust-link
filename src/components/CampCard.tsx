@@ -33,6 +33,42 @@ export function CampCard({
   const lat = camp.latitude != null ? Number(camp.latitude) : null;
   const lng = camp.longitude != null ? Number(camp.longitude) : null;
 
+  const stats: { key: string; Icon: typeof Users; value: string; label: string }[] = [
+    camp.reported_people_count
+      ? {
+          key: "people",
+          Icon: Users,
+          value: String(camp.reported_people_count),
+          label: `${t("detail.occupancy")}: ${camp.reported_people_count}`,
+        }
+      : null,
+    camp.reported_family_count
+      ? {
+          key: "families",
+          Icon: HomeIcon,
+          value: String(camp.reported_family_count),
+          label: `${t("checkin.families")}: ${camp.reported_family_count}`,
+        }
+      : null,
+    camp.reported_children_count
+      ? {
+          key: "children",
+          Icon: Baby,
+          value: String(camp.reported_children_count),
+          label: `${t("card.childrenCount")}: ${camp.reported_children_count}`,
+        }
+      : null,
+    camp.checkin_count > 0
+      ? {
+          key: "checkins",
+          Icon: Users,
+          value: String(camp.checkin_count),
+          label: t("checkin.count", { count: camp.checkin_count }),
+        }
+      : null,
+  ].filter(Boolean) as { key: string; Icon: typeof Users; value: string; label: string }[];
+
+
   return (
     <article className="panel group overflow-hidden transition-colors hover:border-accent/60">
       <Link
