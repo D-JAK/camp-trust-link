@@ -86,7 +86,7 @@ export function UrgencyBadge({ level, reported = false }: { level: string; repor
 
 export function StalenessNote({ staleness }: { staleness: Staleness }) {
   const { t } = useI18n();
-  if (staleness === "fresh") return null;
+  if (staleness === "fresh" || staleness === "never") return null;
   const strong = staleness !== "caution";
   return (
     <span
@@ -96,13 +96,7 @@ export function StalenessNote({ staleness }: { staleness: Staleness }) {
       )}
     >
       <Clock className="size-3.5 shrink-0" />
-      {t(
-        staleness === "never"
-          ? "detail.neverConfirmed"
-          : staleness === "warning"
-            ? "detail.veryStale"
-            : "detail.stale",
-      )}
+      {t(staleness === "warning" ? "detail.veryStale" : "detail.stale")}
     </span>
   );
 }
