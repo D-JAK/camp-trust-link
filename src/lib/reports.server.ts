@@ -9,7 +9,9 @@ type CampStatus = Database["public"]["Enums"]["camp_status"];
 type Relationship = Database["public"]["Enums"]["reporter_relationship"];
 type Gender = Database["public"]["Enums"]["reporter_gender"];
 
-export type ReportPayload = {
+type Optional<T> = { [K in keyof T]: T[K] | undefined };
+
+export type ReportPayload = Optional<{
   campId?: string | null;
   isCorrection?: boolean;
   correctionNote?: string | null;
@@ -50,7 +52,7 @@ export type ReportPayload = {
     exifCapturedAt?: string | null;
     qualityReasons: string[];
   }>;
-};
+}>;
 
 const OTP_TTL_MS = 10 * 60_000;
 const MAX_ATTEMPTS = 5;
