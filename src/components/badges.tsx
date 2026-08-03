@@ -96,13 +96,7 @@ export function StalenessNote({ staleness }: { staleness: Staleness }) {
       )}
     >
       <Clock className="size-3.5 shrink-0" />
-      {t(
-        staleness === "never"
-          ? "detail.neverConfirmed"
-          : staleness === "warning"
-            ? "detail.veryStale"
-            : "detail.stale",
-      )}
+      {t(staleness === "warning" ? "detail.veryStale" : "detail.stale")}
     </span>
   );
 }
