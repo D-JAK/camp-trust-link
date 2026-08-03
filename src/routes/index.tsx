@@ -51,7 +51,7 @@ const emptySearch: Search = {
 };
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): Search => ({
+  validateSearch: (search: Partial<Search> & Record<string, unknown>): Search => ({
     district: typeof search["district"] === "string" ? search["district"] : "",
     taluk: typeof search["taluk"] === "string" ? search["taluk"] : "",
     lsg: typeof search["lsg"] === "string" ? search["lsg"] : "",
