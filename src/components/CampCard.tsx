@@ -150,15 +150,17 @@ export function CampCard({
           </div>
         ) : null}
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
-          <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="size-3.5" />
-              {formatIst(camp.status_last_confirmed_at)}
-            </span>
-          </Hint>
-          <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
-        </div>
+        {camp.status_last_confirmed_at ? (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+            <Hint label={`${t("detail.lastConfirmed")}: ${formatIst(camp.status_last_confirmed_at)} IST`}>
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="size-3.5" />
+                {formatIst(camp.status_last_confirmed_at)}
+              </span>
+            </Hint>
+            <StalenessNote staleness={stalenessOf(camp.status_last_confirmed_at)} />
+          </div>
+        ) : null}
 
       </Link>
 
