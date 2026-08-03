@@ -61,7 +61,7 @@ export const Route = createFileRoute("/")({
       search["status"] === "all"
         ? search["status"]
         : "active",
-    verified: search["verified"] === true || search["verified"] === "true",
+    verified: search["verified"] === true || String(search["verified"]) === "true",
     q: typeof search["q"] === "string" ? search["q"].slice(0, 80) : "",
     amenities: typeof search["amenities"] === "string" ? search["amenities"].slice(0, 200) : "",
     view: search["view"] === "list" ? "list" : "card",
